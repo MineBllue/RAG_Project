@@ -1,0 +1,4 @@
+{
+  "filename": "saga-distributed-transaction.png",
+  "description": "Saga 分布式事务：订单创建->库存扣减->支付扣款，每步成功发布事件，失败触发补偿事务回滚已执行步骤"
+}

@@ -1,0 +1,4 @@
+{
+  "filename": "cicd-pipeline.png",
+  "description": "CI/CD 流水线图：Git Push -> Jenkins 构建 -> 单元测试 -> Docker 镜像构建 -> 推送镜像仓库 -> Docker Compose 部署 -> 健康检查"
+}

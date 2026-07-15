@@ -1,0 +1,4 @@
+{
+  "filename": "text-embedding-vector.png",
+  "description": "文本嵌入向量化：输入文本->Tokenizer分词->BGE-M3模型编码->输出1024维浮点向量->存入Milvus向量数据库->相似度检索"
+}

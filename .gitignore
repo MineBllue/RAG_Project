@@ -1,0 +1,41 @@
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+.env
+
+# Node
+node_modules/
+dist/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker volumes (large data)
+docker/volumes/
+
+# Uploads
+backend/data/uploads/
+backend/data/*.pkl
+
+# Logs
+*.log
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Models (too large)
+*.safetensors
+*.bin
+*.pth
+*.pt
+bert-base-chinese/
+

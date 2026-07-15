@@ -1,0 +1,4 @@
+{
+  "filename": "rag-pipeline-flow.png",
+  "description": "RAG 检索增强生成流程：用户提问 -> Embedding向量化 -> Milvus向量检索 Top-K -> Reranker重排序 -> LLM生成回答 -> 返回带来源引用"
+}

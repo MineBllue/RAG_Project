@@ -1,0 +1,1 @@
+{"filename": "crawled_cf3895c7.png", "description": "控制平面（kube-apiserver、etcd、kube-controller-manager、kube-scheduler）和多个节点。每个节点运行 kubelet 和 kube-proxy。", "source_url": "https://kubernetes.io/zh-cn/docs/concepts/architecture/"}

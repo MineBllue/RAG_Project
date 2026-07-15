@@ -1,0 +1,4 @@
+{
+  "filename": "k8s-architecture.png",
+  "description": "Kubernetes 集群架构：Master 节点(API Server/Scheduler/Controller Manager/etcd) + Worker 节点(kubelet/kube-proxy/Pod)，展示组件间调用关系"
+}

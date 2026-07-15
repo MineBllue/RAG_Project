@@ -1,0 +1,4 @@
+{
+  "filename": "text-embedding.png",
+  "description": "文本 Embedding 向量化示意图：输入文本 -> Tokenizer 分词 -> BGE-M3 模型编码 -> 输出 1024 维向量 -> 存入 Milvus 向量数据库"
+}

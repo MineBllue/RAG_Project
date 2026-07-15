@@ -1,0 +1,4 @@
+{
+  "filename": "microservice-topology.png",
+  "description": "微服务拓扑：API Gateway -> 订单/用户/商品/支付服务，服务间通过 gRPC 同步调用 + Kafka 异步消息，各自独立 MySQL 数据库"
+}

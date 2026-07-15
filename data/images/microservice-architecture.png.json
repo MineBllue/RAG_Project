@@ -1,0 +1,4 @@
+{
+  "filename": "microservice-architecture.png",
+  "description": "微服务架构图：展示 API Gateway、服务注册中心、多个微服务（订单、用户、商品、支付）之间的调用关系，以及消息队列和数据库的拓扑结构"
+}

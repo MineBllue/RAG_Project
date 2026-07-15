@@ -1,0 +1,4 @@
+{
+  "filename": "redis-cluster.png",
+  "description": "Redis Cluster 架构图：6 个节点组成集群，展示数据分片（16384 个哈希槽）、主从复制和 Sentinel 哨兵机制"
+}

@@ -1,0 +1,4 @@
+{
+  "filename": "prometheus-grafana.png",
+  "description": "Prometheus + Grafana 监控架构图：Prometheus 抓取各服务指标 -> AlertManager 告警 -> Grafana Dashboard 可视化展示 QPS/延迟/错误率"
+}

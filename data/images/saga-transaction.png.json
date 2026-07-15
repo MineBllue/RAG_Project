@@ -1,0 +1,4 @@
+{
+  "filename": "saga-transaction.png",
+  "description": "Saga 分布式事务流程图：订单服务创建订单 -> 库存服务扣减库存 -> 支付服务处理支付 -> 若失败则触发补偿事务依次回滚"
+}

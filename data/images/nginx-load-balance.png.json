@@ -1,0 +1,4 @@
+{
+  "filename": "nginx-load-balance.png",
+  "description": "Nginx 负载均衡配置图：upstream 配置多个后端服务 -> 负载均衡策略（轮询/最少连接/IP Hash）-> 健康检查 -> 失败重试"
+}

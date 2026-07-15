@@ -1,0 +1,4 @@
+{
+  "filename": "prometheus-monitoring.png",
+  "description": "Prometheus+Grafana 监控架构：Prometheus Server 拉取 Exporter 指标 -> AlertManager 告警 -> Grafana Dashboard 可视化"
+}

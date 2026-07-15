@@ -1,0 +1,4 @@
+{
+  "filename": "k8s-cluster.png",
+  "description": "Kubernetes 集群架构图：包含 Master 节点（API Server、Scheduler、Controller Manager、etcd）和多个 Worker 节点（kubelet、kube-proxy、Pod）"
+}

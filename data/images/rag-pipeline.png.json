@@ -1,0 +1,4 @@
+{
+  "filename": "rag-pipeline.png",
+  "description": "RAG 检索增强生成流程图：用户提问 -> 向量检索 -> 召回 Top-K 文档块 -> Reranker 重排序 -> LLM 生成回答 -> 返回带来源引用的答案"
+}

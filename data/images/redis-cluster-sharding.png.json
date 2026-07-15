@@ -1,0 +1,4 @@
+{
+  "filename": "redis-cluster-sharding.png",
+  "description": "Redis Cluster 数据分片架构：6节点集群，16384个哈希槽均匀分配，每个主节点配置一个从节点实现高可用"
+}

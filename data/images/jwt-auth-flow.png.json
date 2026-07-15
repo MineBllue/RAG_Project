@@ -1,0 +1,4 @@
+{
+  "filename": "jwt-auth-flow.png",
+  "description": "JWT 认证流程图：用户登录 -> 服务端生成 Access Token（30min）+ Refresh Token（7天）-> 客户端携带 Bearer Token -> 中间件验证 -> 自动刷新"
+}

@@ -1,0 +1,4 @@
+{
+  "filename": "mysql-index-btree.png",
+  "description": "MySQL B+Tree 索引结构图：三层 B+Tree，展示根节点、内部节点和叶子节点，叶子节点形成双向链表支持范围查询"
+}
