@@ -39,3 +39,4 @@ backend/data/*.pkl
 *.pt
 bert-base-chinese/
 
+data/*.pkl

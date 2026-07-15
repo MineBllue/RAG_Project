@@ -212,7 +212,7 @@ async def store_to_milvus(
 
     texts = [doc.page_content for doc in child_docs]
     embeddings = await get_embeddings(texts)
-    sparse_vecs = encode_sparse(texts)
+    sparse_vecs = encode_sparse(texts, kb_id=kb_id)
 
     records = []
     for i, (doc, emb) in enumerate(zip(child_docs, embeddings)):

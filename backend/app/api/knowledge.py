@@ -294,7 +294,7 @@ async def upload_document(
         if not embeddings or len(embeddings) != len(texts):
             raise ValueError(f"向量化失败：期望 {len(texts)} 个向量，实际获取 {len(embeddings) if embeddings else 0} 个。请检查 DASHSCOPE_API_KEY 是否正确")
         # 生成稀疏向量
-        sparse_vecs = encode_sparse(texts)
+        sparse_vecs = encode_sparse(texts, kb_id=kb_id)
 
         records = []
         for i, (db_chunk, emb) in enumerate(zip(db_chunks, embeddings)):
@@ -406,7 +406,7 @@ async def upload_documents_batch(
             from app.services.llm_service import get_embeddings
             embeddings = await get_embeddings(texts)
             from app.services.sparse_embedding import encode_sparse
-            sparse_vecs = encode_sparse(texts)
+            sparse_vecs = encode_sparse(texts, kb_id=kb_id)
 
             records = []
             for i, (dc, emb) in enumerate(zip(db_chunks, embeddings)):

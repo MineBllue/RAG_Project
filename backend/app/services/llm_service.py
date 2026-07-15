@@ -49,16 +49,41 @@ async def chat_stream(
 
 
 async def get_embeddings(texts: list[str]) -> list[list[float]]:
-    """获取文本向量（最多10条/批次）"""
+    """获取文本向量（最多10条/批次，Redis 缓存 7 天）"""
     all_embeddings = []
+    uncached, uncached_indices = [], []
+
+    # 查 Redis 缓存
+    try:
+        import redis, json as _json, hashlib as _hashlib
+        r = redis.Redis(host=settings.redis_host, port=settings.redis_port,
+                        db=settings.redis_db, password=settings.redis_password or None,
+                        decode_responses=False, socket_connect_timeout=1)
+        r.ping()
+    except Exception:
+        r = None
+
+    for i, text in enumerate(texts):
+        key = f"emb:{_hashlib.md5(text.encode()).hexdigest()}" if r else None
+        if r:
+            cached = r.get(key)
+            if cached:
+                all_embeddings.append((i, _json.loads(cached)))
+                continue
+        uncached.append(text)
+        uncached_indices.append(i)
+
+    if not uncached:
+        return [emb for _, emb in sorted(all_embeddings)]
+
     BATCH = 10
     headers = {
         "Authorization": f"Bearer {settings.dashscope_api_key}",
         "Content-Type": "application/json",
     }
     async with httpx.AsyncClient(timeout=60.0) as client:
-        for start in range(0, len(texts), BATCH):
-            batch = texts[start:start + BATCH]
+        for start in range(0, len(uncached), BATCH):
+            batch = uncached[start:start + BATCH]
             payload = {"model": settings.embedding_model, "input": {"texts": batch}}
             resp = await client.post(
                 "https://dashscope.aliyuncs.com/api/v1/services/embeddings/text-embedding/text-embedding",
@@ -66,9 +91,16 @@ async def get_embeddings(texts: list[str]) -> list[list[float]]:
                 json=payload,
             )
             if resp.status_code != 200:
-                raise ValueError(f"Embedding API 错误 ({resp.status_code}) batch[{start}:{start+BATCH}]: {resp.text[:300]}")
+                raise ValueError(f"Embedding API error ({resp.status_code}): {resp.text[:300]}")
             data = resp.json()
             if "output" not in data:
-                raise ValueError(f"Embedding 返回异常: {data.get('message', data)}")
-            all_embeddings.extend(item["embedding"] for item in data["output"]["embeddings"])
-    return all_embeddings
+                raise ValueError(f"Embedding error: {data.get('message', data)}")
+            new_embs = [item["embedding"] for item in data["output"]["embeddings"]]
+            for j, emb in enumerate(new_embs):
+                idx = uncached_indices[start + j] if start + j < len(uncached_indices) else len(all_embeddings) + j
+                all_embeddings.append((idx, emb))
+                if r:
+                    key = f"emb:{_hashlib.md5(uncached[start + j].encode()).hexdigest()}"
+                    r.setex(key, 86400 * 7, _json.dumps(emb))
+
+    return [emb for _, emb in sorted(all_embeddings)]

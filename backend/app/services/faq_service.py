@@ -51,12 +51,53 @@ def _cache_key(question: str) -> str:
 
 
 def _get_cached_answer(question: str) -> Optional[str]:
-    """从 Redis 获取缓存答案"""
+    """从 Redis 获取缓存答案（文本哈希 + 语义相似度双重匹配）"""
     try:
         r = _get_redis()
-        return r.get(_cache_key(question))
+        exact = r.get(_cache_key(question))
+        if exact:
+            return exact
+        # 语义缓存：通过 embedding 相似度查找
+        return _semantic_cache_lookup(question, r)
     except Exception:
         return None
+
+
+def _semantic_cache_lookup(question: str, r) -> Optional[str]:
+    """语义相似度匹配缓存"""
+    try:
+        import json, asyncio
+        from app.services.llm_service import get_embeddings
+        emb = asyncio.run(get_embeddings([question]))
+        if not emb:
+            return None
+        q_vec = emb[0]
+        # 扫描 faq:emb:* 键（最多 100 个）
+        keys = list(r.scan_iter("faq:emb:*", count=100))
+        if not keys:
+            return None
+        best_key, best_sim = None, 0.0
+        for key in keys:
+            cached_vec = r.get(key)
+            if not cached_vec:
+                continue
+            try:
+                vec = json.loads(cached_vec)
+            except Exception:
+                continue
+            dot = sum(a * b for a, b in zip(q_vec, vec))
+            na = sum(a * a for a in q_vec) ** 0.5
+            nb = sum(b * b for b in vec) ** 0.5
+            sim = dot / (na * nb) if na > 0 and nb > 0 else 0
+            if sim > best_sim:
+                best_sim = sim
+                best_key = key
+        if best_sim > 0.92 and best_key:
+            answer_key = best_key.replace(b"faq:emb:", b"faq:")
+            return r.get(answer_key)
+    except Exception:
+        pass
+    return None
 
 
 def _set_cached_answer(question: str, answer: str, ttl: int = 86400):
@@ -64,6 +105,15 @@ def _set_cached_answer(question: str, answer: str, ttl: int = 86400):
     try:
         r = _get_redis()
         r.setex(_cache_key(question), ttl, answer)
+        # 同时缓存 embedding 向量用于语义匹配
+        try:
+            import json, asyncio
+            from app.services.llm_service import get_embeddings
+            emb = asyncio.run(get_embeddings([question]))
+            if emb:
+                r.setex(f"faq:emb:{_cache_key(question)}", ttl, json.dumps(emb[0]))
+        except Exception:
+            pass
     except Exception:
         pass
 
