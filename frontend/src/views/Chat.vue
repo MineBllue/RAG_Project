@@ -89,8 +89,6 @@ onMounted(() => { loadKBs(); loadConversations() })
 </template>
 
 <style scoped>
-@import '../styles/shared.css';
-
 .hdr-model { font-size: 11px; color: var(--text-secondary); padding: 3px 10px; border-radius: 6px; background: var(--bg-card); border: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 5px }
 .m-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green) }
 .hdr-btn { height: 30px; padding: 0 12px; border-radius: 6px; background: transparent; border: 1px solid var(--border-subtle); color: var(--text-secondary); cursor: pointer; font-size: 11px; font-family: inherit; transition: all .2s }

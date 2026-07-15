@@ -92,7 +92,3 @@ async function handleLogin() {
     </div>
   </div>
 </template>
-
-<style scoped>
-@import '../styles/auth.css';
-</style>

@@ -12,6 +12,3 @@ import { toastVisible, toastMsg } from './stores/toast'
     </transition>
   </router-view>
 </template>
-
-<style>
-</style>

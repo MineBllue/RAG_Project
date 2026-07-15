@@ -96,7 +96,3 @@ async function handleRegister() {
     </div>
   </div>
 </template>
-
-<style scoped>
-@import '../styles/auth.css';
-</style>
