@@ -1,0 +1,268 @@
+/* ===== Sidebar ===== */
+.sidebar {
+  width: 72px;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 0;
+  gap: 2px;
+  flex-shrink: 0
+}
+
+.sidebar-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: 1
+}
+
+.s-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 8px;
+  cursor: pointer;
+  flex-shrink: 0
+}
+
+.s-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover
+}
+
+.s-item {
+  width: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 4px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--text-tertiary);
+  font-size: 10px;
+  transition: all .2s
+}
+
+.s-item:hover {
+  color: var(--text-secondary);
+  background: var(--bg-hover)
+}
+
+.s-item.active {
+  color: var(--accent);
+  background: var(--accent-soft)
+}
+
+/* ===== Avatar ===== */
+.avatar-wrap {
+  position: relative
+}
+
+.s-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all .25s
+}
+
+.s-avatar:hover {
+  transform: scale(1.08)
+}
+
+.s-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover
+}
+
+.s-avatar-fb {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--red), var(--gold));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff
+}
+
+/* ===== Avatar Menu ===== */
+.avatar-menu {
+  position: fixed;
+  bottom: 40px;
+  left: 86px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-card);
+  border-radius: 10px;
+  padding: 4px;
+  min-width: 130px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, .12);
+  z-index: 1000;
+  animation: menuIn .15s cubic-bezier(.4, 0, .2, 1)
+}
+
+@keyframes menuIn {
+  from { opacity: 0; transform: translateY(4px) }
+  to   { opacity: 1; transform: translateY(0) }
+}
+
+.menu-item {
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .15s
+}
+
+.menu-item:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary)
+}
+
+.menu-item.danger {
+  color: var(--red)
+}
+
+.menu-item.danger:hover {
+  background: var(--red-soft)
+}
+
+.menu-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 2px 0
+}
+
+/* ===== Left Panel (通用) ===== */
+.panel-l {
+  width: 240px;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden
+}
+
+.pl-hd {
+  padding: 12px 14px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--text-tertiary);
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center
+}
+
+.pl-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  background: transparent;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .15s
+}
+
+.pl-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary)
+}
+
+/* ===== Main Header ===== */
+.main-hd {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  gap: 10px;
+  flex-shrink: 0
+}
+
+.main-title {
+  font-weight: 600;
+  font-size: 13px;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap
+}
+
+/* ===== Welcome 占位 ===== */
+.welcome {
+  text-align: center;
+  margin-top: 60px;
+  animation: fadeSlideIn .6s cubic-bezier(.4, 0, .2, 1)
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(20px) }
+  to   { opacity: 1; transform: translateY(0) }
+}
+
+.welcome-img {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  object-fit: cover;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .08)
+}
+
+.welcome h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 6px
+}
+
+.welcome p {
+  color: var(--text-tertiary);
+  font-size: 13px
+}
+
+/* ===== Empty State ===== */
+.empty {
+  padding: 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 11px
+}
+
+/* ===== Layout helpers ===== */
+.app-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden
+}
+
+@media (max-width: 768px) {
+  .panel-l, .panel-r {
+    display: none
+  }
+}

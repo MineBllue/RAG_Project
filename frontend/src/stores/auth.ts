@@ -1,12 +1,13 @@
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
-import { login as apiLogin, register as apiRegister } from '../api'
+import {defineStore} from 'pinia'
+import {ref} from 'vue'
+import {login as apiLogin, register as apiRegister} from '../api'
+import type {LoginParams, RegisterParams, User} from '../types'
 
 export const useAuthStore = defineStore('auth', () => {
-  const user = ref<{ id: number; username: string } | null>(null)
+  const user = ref<User | null>(null)
   const token = ref(localStorage.getItem('access_token') || '')
 
-  async function doLogin(data: { username: string; password: string; captcha_key: string; captcha_code: string }) {
+  async function doLogin(data: LoginParams) {
     const res = await apiLogin(data)
     const { access_token, refresh_token, user_id, username } = res.data
     localStorage.setItem('access_token', access_token)
@@ -15,7 +16,7 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = { id: user_id, username }
   }
 
-  async function doRegister(data: any) {
+  async function doRegister(data: RegisterParams) {
     const res = await apiRegister(data)
     const { access_token, refresh_token, user_id, username } = res.data
     localStorage.setItem('access_token', access_token)

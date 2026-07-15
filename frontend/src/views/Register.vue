@@ -98,24 +98,5 @@ async function handleRegister() {
 </template>
 
 <style scoped>
-.auth-page { height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 30% 50%,rgba(59,130,246,.08) 0%,transparent 50%),radial-gradient(ellipse at 70% 30%,rgba(245,158,11,.06) 0%,transparent 50%),var(--bg-root) }
-.auth-card { width:380px;background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:40px 36px }
-.auth-header { text-align:center;margin-bottom:32px }
-.auth-logo { width:48px;height:48px;border-radius:var(--radius-sm);object-fit:cover;display:block;margin:0 auto 12px }
-.auth-header h1 { font-size:20px;font-weight:700;margin-bottom:4px }
-.auth-header p { font-size:13px;color:var(--text-tertiary) }
-.field { margin-bottom:18px }
-.field label { display:block;font-size:12px;color:var(--text-secondary);margin-bottom:6px }
-.field input { width:100%;padding:10px 12px;background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius-sm);color:var(--text-primary);font-size:14px;font-family:inherit;outline:none;transition:border-color .15s }
-.field input:focus { border-color:var(--accent) }
-.captcha-row { display:flex;gap:10px }
-.captcha-row input { flex:1 }
-.captcha-img { height:42px;border-radius:var(--radius-sm);cursor:pointer;border:1px solid var(--border-card) }
-.error { color:var(--red);font-size:13px;margin-bottom:12px }
-.btn-primary { width:100%;padding:11px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;transition:opacity .15s }
-.btn-primary:hover { opacity:.9 }
-.btn-primary:disabled { opacity:.5;cursor:not-allowed }
-.auth-footer { text-align:center;margin-top:20px;font-size:13px;color:var(--text-tertiary) }
-.auth-footer a { color:var(--accent);text-decoration:none }
-.auth-footer a:hover { text-decoration:underline }
+@import '../styles/auth.css';
 </style>
