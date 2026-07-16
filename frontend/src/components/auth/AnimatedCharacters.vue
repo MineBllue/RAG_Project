@@ -201,12 +201,14 @@ const yellowPos = computed(() => calcPos(yellowRef.value))
   bottom: 0;
   transition: transform .7s ease-in-out, height .7s ease-in-out;
   transform-origin: bottom center;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px)
 }
 
-.char-purple { left: 70px; width: 180px; background: #6C3FF5; border-radius: 10px 10px 0 0; z-index: 1 }
-.char-black { left: 240px; width: 120px; height: 310px; background: #2D2D2D; border-radius: 8px 8px 0 0; z-index: 2 }
-.char-orange { left: 0; width: 240px; height: 200px; background: #FF9B6B; border-radius: 120px 120px 0 0; z-index: 3 }
-.char-yellow { left: 310px; width: 140px; height: 230px; background: #E8D754; border-radius: 70px 70px 0 0; z-index: 4 }
+.char-purple { left: 70px; width: 180px; background: rgba(30, 100, 130, 0.82); border-radius: 10px 10px 0 0; z-index: 1 }
+.char-black { left: 240px; width: 120px; height: 310px; background: rgba(15, 55, 75, 0.85); border-radius: 8px 8px 0 0; z-index: 2 }
+.char-orange { left: 0; width: 240px; height: 200px; background: rgba(200, 140, 100, 0.78); border-radius: 120px 120px 0 0; z-index: 3 }
+.char-yellow { left: 310px; width: 140px; height: 230px; background: rgba(160, 200, 180, 0.78); border-radius: 70px 70px 0 0; z-index: 4 }
 
 .eyes-row {
   position: absolute;
