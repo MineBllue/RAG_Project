@@ -52,7 +52,8 @@ const emit = defineEmits<{
         <select v-model="chunkMethod">
           <option value="default">默认</option>
           <option value="semantic">语义</option>
-          <option value="fixed">固定大小</option>
+          <option value="markdown">Markdown 结构</option>
+          <option value="parent_child">父子切块</option>
         </select>
       </div>
       <div class="msel">
