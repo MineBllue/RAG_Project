@@ -31,8 +31,10 @@ const show = defineModel<boolean>('show', { default: false })
 <style scoped>
 .panel-r {
   width: 240px;
-  background: var(--bg-surface);
-  border-left: 1px solid var(--border-subtle);
+  background: rgba(255,255,255,0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-left: 1px solid rgba(0,0,0,0.05);
   padding: 14px;
   overflow-y: auto;
   animation: sIn .3s cubic-bezier(.4, 0, .2, 1)

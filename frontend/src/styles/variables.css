@@ -1,10 +1,10 @@
 :root {
-  --bg-root: #f3f4f6;
-  --bg-surface: #ffffff;
-  --bg-sidebar: #f8f9fb;
+  --bg-root: #edeff2;
+  --bg-surface: rgba(255,255,255,0.7);
+  --bg-sidebar: transparent;
   --bg-card: #ffffff;
   --bg-hover: #f0f1f3;
-  --border-subtle: #e5e7eb;
+  --border-subtle: rgba(0,0,0,0.06);
   --border-card: #d1d5db;
   --text-primary: #111827;
   --text-secondary: #6b7280;

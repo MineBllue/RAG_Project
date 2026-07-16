@@ -59,8 +59,8 @@ const expanded = ref(false)
 .msg-av-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50% }
 .msg-body { font-size: 13px; line-height: 1.6; min-width: 0 }
 .msg-bub { padding: 10px 14px; border-radius: 12px }
-.msg-bub.user { background: var(--accent-soft); border: 1px solid rgba(59, 130, 246, .2); border-bottom-right-radius: 4px }
-.msg-bub.assistant { background: var(--bg-hover); border: 1px solid var(--border-subtle); border-bottom-left-radius: 4px }
+.msg-bub.user { background: rgba(99,102,241,0.12); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(99,102,241,0.15); border-bottom-right-radius: 4px }
+.msg-bub.assistant { background: rgba(255,255,255,0.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 1px 4px rgba(0,0,0,0.04); border-bottom-left-radius: 4px }
 .msg-text { white-space: pre-wrap }
 .eval-box { display: flex; gap: 8px; margin-top: 6px }
 .eval-badge { padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 500; background: var(--accent-soft); color: var(--accent) }

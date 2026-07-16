@@ -89,9 +89,9 @@ onMounted(() => { loadKBs(); loadConversations() })
 </template>
 
 <style scoped>
-.hdr-model { font-size: 11px; color: var(--text-secondary); padding: 3px 10px; border-radius: 6px; background: var(--bg-card); border: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 5px }
+.hdr-model { font-size: 11px; color: var(--text-secondary); padding: 4px 12px; border-radius: 8px; background: rgba(255,255,255,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,0.06); display: flex; align-items: center; gap: 5px }
 .m-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green) }
-.hdr-btn { height: 30px; padding: 0 12px; border-radius: 6px; background: transparent; border: 1px solid var(--border-subtle); color: var(--text-secondary); cursor: pointer; font-size: 11px; font-family: inherit; transition: all .2s }
-.hdr-btn:hover,.hdr-btn.active { background: var(--bg-hover); color: var(--text-primary) }
-.chat-area { flex: 1; overflow-y: auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 16px }
+.hdr-btn { height: 30px; padding: 0 12px; border-radius: 8px; background: rgba(255,255,255,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary); cursor: pointer; font-size: 11px; font-family: inherit; transition: all .2s }
+.hdr-btn:hover,.hdr-btn.active { background: rgba(0,0,0,0.05); color: var(--text-primary) }
+.chat-area { flex: 1; overflow-y: auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 12px }
 </style>

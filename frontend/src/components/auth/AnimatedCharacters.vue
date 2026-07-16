@@ -232,7 +232,7 @@ const yellowPos = computed(() => calcPos(yellowRef.value))
 .pupil-dark {
   width: 7px; height: 7px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.9);
+  background: #2D2D2D;
   transition: transform .1s ease-out;
 }
 .pupil-dark.pupil-sm { width: 6px; height: 6px }

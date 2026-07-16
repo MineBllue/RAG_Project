@@ -37,12 +37,12 @@ function handleSend() {
 <style scoped>
 .input-area { padding: 10px 20px 14px; border-top: 1px solid var(--border-subtle); background: var(--bg-surface); flex-shrink: 0 }
 .input-row { max-width: 700px; margin: 0 auto; display: flex; gap: 8px }
-.input-box { flex: 1; background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 10px; padding: 0 10px 0 14px; transition: all .25s }
-.input-box:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); transform: translateY(-1px) }
+.input-box { flex: 1; background: rgba(255,255,255,0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(0,0,0,0.08); border-radius: 14px; padding: 0 10px 0 14px; transition: all .25s }
+.input-box:focus-within { border-color: rgba(99,102,241,0.4); box-shadow: 0 0 0 3px rgba(99,102,241,0.08); transform: translateY(-1px) }
 .input-box input { width: 100%; background: none; border: none; color: var(--text-primary); font-size: 13px; font-family: inherit; outline: none; line-height: 38px }
 .input-box input::placeholder { color: var(--text-muted) }
-.send-btn { width: 42px; height: 42px; border-radius: 10px; background: var(--accent); border: none; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .25s }
-.send-btn:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 4px 16px rgba(59, 130, 246, .2) }
+.send-btn { width: 42px; height: 42px; border-radius: 12px; background: rgba(99,102,241,0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: none; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .25s }
+.send-btn:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 4px 16px rgba(99,102,241,0.25) }
 .send-btn:active:not(:disabled) { transform: scale(.95) }
 .send-btn:disabled { opacity: .25; cursor: not-allowed }
 .input-hint { display: flex; gap: 14px; margin-top: 6px; max-width: 700px; margin-left: auto; margin-right: auto; font-size: 10px; color: var(--text-muted) }
