@@ -35,11 +35,11 @@ export function useKnowledge() {
   }
 
   async function doDeleteKB(id: number) {
-    if (!confirm('确认删除该知识库及所有文档？')) return
+    if (!confirm('删除知识库？所有数据将被清空。')) return
     try {
       await deleteKB(id)
+      await loadKBs()
       if (activeKbId.value === id) { activeKbId.value = null; documents.value = [] }
-      kbList.value = kbList.value.filter(k => k.id !== id)
     } catch {}
   }
 

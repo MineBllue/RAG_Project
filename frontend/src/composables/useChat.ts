@@ -51,22 +51,22 @@ export function useChat() {
     const text = inputText.value.trim()
     if (!text || sending.value) return
     inputText.value = ''
-    messages.value.push({ role: 'user', content: text })
-    scrollBottom()
 
     if (!activeConvId.value) {
-      const title = text.slice(0, 30)
+      const title = text.length > 30 ? text.substring(0, 30) + '...' : text
       try {
         const r = await createConversation(title)
         activeConvId.value = r.data.id
-        conversations.value.unshift({ id: r.data.id, title })
+        conversations.value.unshift(r.data)
       } catch { return }
     }
 
+    messages.value.push({ role: 'user', content: text })
+    scrollBottom()
     const last: Message = { role: 'assistant', content: '', streaming: true }
     messages.value.push(last)
-    sending.value = true
     scrollBottom()
+    sending.value = true
 
     const token = localStorage.getItem('access_token')
     try {

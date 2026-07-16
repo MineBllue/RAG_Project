@@ -52,9 +52,8 @@ async function saveEdit(content: string) {
   if (!editingChunk.value) return
   try {
     await updateChunk(activeKbId.value!, activeDocId.value!, editingChunk.value.id, content)
-    const c = chunks.value.find(ch => ch.id === editingChunk.value!.id)
-    if (c) c.content = content
     editingChunk.value = null
+    await selectDoc(activeDocId.value!)
   } catch { showError('保存失败') }
 }
 
@@ -62,7 +61,7 @@ async function doDeleteChunk(chunkId: number) {
   if (!confirm('确认删除该分块？')) return
   try {
     await deleteChunk(activeKbId.value!, activeDocId.value!, chunkId)
-    chunks.value = chunks.value.filter(c => c.id !== chunkId)
+    await selectDoc(activeDocId.value!)
   } catch {}
 }
 

@@ -1,6 +1,5 @@
 import { ref } from 'vue'
 import type { ChunkMethod } from '../types'
-import { uploadDocument } from '../api'
 
 export function useUpload() {
   const uploadFiles = ref<File[]>([])
@@ -17,18 +16,34 @@ export function useUpload() {
 
   async function doUpload(kbId: number, errorFn: (msg: string) => void, onSuccess: () => void) {
     if (!uploadFiles.value.length) return
-    loading.value = true; progress.value = 0; progStatus.value = ''
+    loading.value = true
+    progress.value = 10; progStatus.value = '准备上传...'
+    await new Promise(r => setTimeout(r, 300))
+    progress.value = 25; progStatus.value = '上传中...'
     const fd = new FormData()
     uploadFiles.value.forEach(f => fd.append('files', f))
-    // 使用批量上传端点
     fd.append('chunk_size', String(chunkSize.value))
     fd.append('chunk_overlap', String(overlap.value))
     fd.append('chunk_method', chunkMethod.value)
+    progress.value = 40; progStatus.value = '解析文档...'
+    await new Promise(r => setTimeout(r, 200))
+    progress.value = 60; progStatus.value = '向量化中...'
     try {
-      await uploadDocument(kbId, fd)
+      const token = localStorage.getItem('access_token')
+      const resp = await fetch('/api/knowledge/' + kbId + '/upload-batch', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + token },
+        body: fd,
+      })
+      await resp.json()
+      progress.value = 85; progStatus.value = '存储中...'
+      await new Promise(r => setTimeout(r, 200))
+      progress.value = 100; progStatus.value = '完成'
+      setTimeout(() => { progress.value = 0; progStatus.value = '' }, 1500)
       uploadFiles.value = []
       onSuccess()
     } catch (e: any) {
+      progress.value = 0; progStatus.value = '失败'
       errorFn('上传失败: ' + (e.message || ''))
     } finally { loading.value = false }
   }
