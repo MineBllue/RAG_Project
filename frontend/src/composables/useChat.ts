@@ -66,13 +66,13 @@ export function useChat() {
 
     const token = localStorage.getItem('access_token')
     try {
-      const resp = await fetch('/api/chat/stream', {
+      const resp = await fetch('/api/chat/query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           conversation_id: activeConvId.value,
           kb_ids: kbIds,
-          message: text,
+          question: text,
           temperature: params.temperature,
           top_p: params.topP,
           max_tokens: params.maxTokens,

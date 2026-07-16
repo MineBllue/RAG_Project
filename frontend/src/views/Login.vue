@@ -119,3 +119,9 @@ async function handleLogin() {
     </div>
   </div>
 </template>
+
+<style>
+.auth-header{
+  margin-bottom: 10px;
+}
+</style>
