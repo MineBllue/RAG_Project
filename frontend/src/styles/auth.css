@@ -9,7 +9,67 @@
     var(--bg-root)
 }
 
+.auth-page-split {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  padding: 0;
+  justify-content: center
+}
+
 .auth-card {
+  margin-left: 60px
+}
+
+.pwd-wrap {
+  position: relative;
+  display: flex;
+  align-items: center
+}
+
+.pwd-wrap input {
+  flex: 1;
+  padding-right: 40px
+}
+
+.pwd-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 2px
+}
+
+.pwd-toggle:hover {
+  color: var(--text-secondary)
+}
+
+/* --- mobile: stack vertically --- */
+@media (max-width: 900px) {
+  .auth-page-split {
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    justify-content: flex-start;
+    gap: 20px
+  }
+  .auth-page-split .characters-scene {
+    width: 100%;
+    max-width: 400px;
+    height: 260px
+  }
+  .auth-page-split .auth-card {
+    margin-left: 0;
+    width: 100%;
+    max-width: 380px
+  }
+}
   width: 380px;
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
