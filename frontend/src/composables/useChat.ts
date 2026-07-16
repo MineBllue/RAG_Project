@@ -24,7 +24,10 @@ export function useChat() {
     activeConvId.value = conv.id
     try {
       const r = await getMessages(conv.id)
-      messages.value = r.data
+      messages.value = r.data.map((m: any) => {
+        if (m.sources) try { m._sources = JSON.parse(m.sources) } catch {}
+        return m
+      })
     } catch { messages.value = [] }
     nextTick(scrollBottom)
   }
@@ -49,6 +52,7 @@ export function useChat() {
     if (!text || sending.value) return
     inputText.value = ''
     messages.value.push({ role: 'user', content: text })
+    scrollBottom()
 
     if (!activeConvId.value) {
       const title = text.slice(0, 30)
