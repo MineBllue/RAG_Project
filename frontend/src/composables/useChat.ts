@@ -63,8 +63,8 @@ export function useChat() {
 
     messages.value.push({ role: 'user', content: text })
     scrollBottom()
-    const last: Message = { role: 'assistant', content: '', streaming: true }
-    messages.value.push(last)
+    messages.value.push({ role: 'assistant', content: '', streaming: true })
+    const last = messages.value[messages.value.length - 1] as Message
     scrollBottom()
     sending.value = true
 
