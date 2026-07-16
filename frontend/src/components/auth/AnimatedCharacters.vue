@@ -205,10 +205,10 @@ const yellowPos = computed(() => calcPos(yellowRef.value))
   -webkit-backdrop-filter: blur(4px)
 }
 
-.char-purple { left: 70px; width: 180px; background: rgba(30, 100, 130, 0.82); border-radius: 10px 10px 0 0; z-index: 1 }
-.char-black { left: 240px; width: 120px; height: 310px; background: rgba(15, 55, 75, 0.85); border-radius: 8px 8px 0 0; z-index: 2 }
-.char-orange { left: 0; width: 240px; height: 200px; background: rgba(200, 140, 100, 0.78); border-radius: 120px 120px 0 0; z-index: 3 }
-.char-yellow { left: 310px; width: 140px; height: 230px; background: rgba(160, 200, 180, 0.78); border-radius: 70px 70px 0 0; z-index: 4 }
+.char-purple { left: 70px; width: 180px; background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.28); border-radius: 10px 10px 0 0; z-index: 1 }
+.char-black { left: 240px; width: 120px; height: 310px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.22); border-radius: 8px 8px 0 0; z-index: 2 }
+.char-orange { left: 0; width: 240px; height: 200px; background: rgba(255,255,255,0.20); border: 1px solid rgba(255,255,255,0.30); border-radius: 120px 120px 0 0; z-index: 3 }
+.char-yellow { left: 310px; width: 140px; height: 230px; background: rgba(255,255,255,0.22); border: 1px solid rgba(255,255,255,0.32); border-radius: 70px 70px 0 0; z-index: 4 }
 
 .eyes-row {
   position: absolute;
@@ -221,7 +221,7 @@ const yellowPos = computed(() => calcPos(yellowRef.value))
 .eye-white {
   width: 18px; height: 18px;
   border-radius: 50%;
-  background: #fff;
+  background: rgba(255,255,255,0.6);
   display: flex; align-items: center; justify-content: center;
   overflow: hidden;
   transition: height .15s;
@@ -232,7 +232,7 @@ const yellowPos = computed(() => calcPos(yellowRef.value))
 .pupil-dark {
   width: 7px; height: 7px;
   border-radius: 50%;
-  background: #2D2D2D;
+  background: rgba(255,255,255,0.9);
   transition: transform .1s ease-out;
 }
 .pupil-dark.pupil-sm { width: 6px; height: 6px }
@@ -241,7 +241,7 @@ const yellowPos = computed(() => calcPos(yellowRef.value))
 .char-mouth {
   position: absolute;
   width: 80px; height: 4px;
-  background: #2D2D2D;
+  background: rgba(0,0,0,0.35);
   border-radius: 2px;
   transition: left .2s ease-out;
 }
