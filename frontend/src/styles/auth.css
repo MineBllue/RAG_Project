@@ -6,17 +6,6 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: url('@/icon/wallpaper.jpg') center/cover no-repeat
-}
-
-/* 壁纸叠加层 (保持可读性) */
-.auth-page::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.2);
-  pointer-events: none;
-  z-index: 0
 }
 
 .auth-page-split {
@@ -25,16 +14,6 @@
   gap: 0;
   padding: 0;
   justify-content: center;
-  background: url('@/icon/wallpaper.jpg') center/cover no-repeat
-}
-
-.auth-page-split::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.2);
-  pointer-events: none;
-  z-index: 0
 }
 
 /* Liquid Glass 卡片 */

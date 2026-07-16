@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { getCaptcha } from '../api'
+import VideoBackground from '../components/shared/VideoBackground.vue'
 import AnimatedCharacters from '../components/auth/AnimatedCharacters.vue'
 
 const router = useRouter()
@@ -67,6 +68,7 @@ async function handleRegister() {
 
 <template>
   <div class="auth-page auth-page-split">
+    <VideoBackground src="/wallpaper.mp4" />
     <AnimatedCharacters :is-typing="isTyping" :show-password="showPassword" :password-length="password.length" />
     <div class="auth-card">
       <div class="auth-header">
