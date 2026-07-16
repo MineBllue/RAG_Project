@@ -259,6 +259,19 @@
   overflow: hidden
 }
 
+[data-theme="dark"] .sidebar {
+  background: rgba(0,0,0,0.3);
+  border-right: 1px solid rgba(255,255,255,0.06)
+}
+[data-theme="dark"] .panel-l {
+  background: rgba(0,0,0,0.25);
+  border-right: 1px solid rgba(255,255,255,0.04)
+}
+[data-theme="dark"] .main-hd {
+  background: rgba(0,0,0,0.25);
+  border-bottom: 1px solid rgba(255,255,255,0.04)
+}
+
 .main {
   flex: 1;
   display: flex;
