@@ -86,13 +86,11 @@ export function useChat() {
       const reader = resp.body?.getReader()
       if (!reader) { last.content = '响应为空'; last.streaming = false; sending.value = false; return }
       const decoder = new TextDecoder()
-      let buffer = ''
       while (true) {
         const { done, value } = await reader.read()
-        buffer += decoder.decode(value || new Uint8Array(), { stream: !done })
-        const lines = buffer.split('\n')
-        buffer = lines.pop() || ''
-        for (const line of lines) {
+        if (done) break
+        const t = decoder.decode(value, { stream: true })
+        for (const line of t.split('\n')) {
           if (!line.startsWith('data: ')) continue
           try {
             const d = JSON.parse(line.slice(6))
@@ -107,7 +105,6 @@ export function useChat() {
             if (d.error) { last.content = '错误: ' + d.error; last.streaming = false }
           } catch {}
         }
-        if (done) break
       }
       last.streaming = false
     } catch (e: any) {
