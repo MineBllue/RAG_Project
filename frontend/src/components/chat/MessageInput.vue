@@ -46,11 +46,6 @@ function handleSend() {
 .send-btn:active:not(:disabled) { transform: scale(.95) }
 .send-btn:disabled { opacity: .25; cursor: not-allowed }
 
-[data-theme="dark"] .input-area { border-color: rgba(255,255,255,0.06); background: transparent }
-[data-theme="dark"] .input-box { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1) }
-[data-theme="dark"] .input-box input { color: #f5f5f7 }
-[data-theme="dark"] .input-hint { color: rgba(255,255,255,0.3) }
-[data-theme="dark"] .input-hint .warn { color: #f87171 }
 .input-hint { display: flex; gap: 14px; margin-top: 6px; max-width: 700px; margin-left: auto; margin-right: auto; font-size: 10px; color: var(--text-muted) }
 .warn { color: var(--red) }
 </style>

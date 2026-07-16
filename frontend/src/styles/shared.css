@@ -14,33 +14,6 @@
 }
 
 /* ===== Dark Mode: 头像菜单 ===== */
-[data-theme="dark"] .avatar-menu {
-  background: rgba(30,30,35,0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.1);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.6)
-}
-[data-theme="dark"] .menu-item {
-  color: rgba(255,255,255,0.7)
-}
-[data-theme="dark"] .menu-item:hover {
-  background: rgba(255,255,255,0.08);
-  color: #fff
-}
-[data-theme="dark"] .menu-item.danger {
-  color: #f87171
-}
-[data-theme="dark"] .s-item {
-  color: rgba(255,255,255,0.35)
-}
-[data-theme="dark"] .s-item:hover {
-  color: rgba(255,255,255,0.6)
-}
-[data-theme="dark"] .s-item.active {
-  color: rgba(255,255,255,0.9);
-  background: rgba(255,255,255,0.08)
-}
 
 .sidebar-top {
   display: flex;
@@ -288,18 +261,6 @@
   overflow: hidden
 }
 
-[data-theme="dark"] .sidebar {
-  background: rgba(0,0,0,0.3);
-  border-right: 1px solid rgba(255,255,255,0.06)
-}
-[data-theme="dark"] .panel-l {
-  background: rgba(0,0,0,0.25);
-  border-right: 1px solid rgba(255,255,255,0.04)
-}
-[data-theme="dark"] .main-hd {
-  background: rgba(0,0,0,0.25);
-  border-bottom: 1px solid rgba(255,255,255,0.04)
-}
 
 .main {
   flex: 1;

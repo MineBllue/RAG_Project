@@ -62,8 +62,6 @@ const expanded = ref(false)
 .msg-bub.user { background: rgba(99,102,241,0.12); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(99,102,241,0.15); border-bottom-right-radius: 4px }
 .msg-bub.assistant { background: rgba(255,255,255,0.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 1px 4px rgba(0,0,0,0.04); border-bottom-left-radius: 4px }
 
-[data-theme="dark"] .msg-bub.user { background: rgba(99,102,241,0.2); border-color: rgba(99,102,241,0.3) }
-[data-theme="dark"] .msg-bub.assistant { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.08); box-shadow: none }
 .msg-text { white-space: pre-wrap }
 .eval-box { display: flex; gap: 8px; margin-top: 6px }
 .eval-badge { padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 500; background: var(--accent-soft); color: var(--accent) }

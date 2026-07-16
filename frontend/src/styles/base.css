@@ -12,9 +12,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-[data-theme="dark"] body {
-  background: var(--bg-root)
-}
 
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
