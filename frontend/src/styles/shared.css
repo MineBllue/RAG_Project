@@ -2,8 +2,6 @@
 .sidebar {
   width: 72px;
   background: rgba(255,255,255,0.6);
-  backdrop-filter: blur(16px) saturate(1.6);
-  -webkit-backdrop-filter: blur(16px) saturate(1.6);
   border-right: 1px solid rgba(0,0,0,0.06);
   display: flex;
   flex-direction: column;
@@ -104,12 +102,14 @@
   position: fixed;
   bottom: 40px;
   left: 86px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-card);
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
   padding: 4px;
   min-width: 130px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, .12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, .15);
   z-index: 1000;
   animation: menuIn .15s cubic-bezier(.4, 0, .2, 1)
 }
@@ -121,24 +121,20 @@
 
 .menu-item {
   padding: 8px 12px;
-  font-size: 12px;
-  color: var(--text-secondary);
-  border-radius: 6px;
+  font-size: 13px;
+  color: #333;
+  border-radius: 8px;
   cursor: pointer;
   transition: all .15s
 }
 
 .menu-item:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary)
+  background: rgba(0, 0, 0, 0.05);
+  color: #111
 }
 
 .menu-item.danger {
-  color: var(--red)
-}
-
-.menu-item.danger:hover {
-  background: var(--red-soft)
+  color: #ef4444
 }
 
 .menu-divider {
