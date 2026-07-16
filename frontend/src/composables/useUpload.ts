@@ -20,8 +20,9 @@ export function useUpload() {
     loading.value = true; progress.value = 0; progStatus.value = ''
     const fd = new FormData()
     uploadFiles.value.forEach(f => fd.append('files', f))
+    // 使用批量上传端点
     fd.append('chunk_size', String(chunkSize.value))
-    fd.append('overlap', String(overlap.value))
+    fd.append('chunk_overlap', String(overlap.value))
     fd.append('chunk_method', chunkMethod.value)
     try {
       await uploadDocument(kbId, fd)
