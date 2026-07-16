@@ -50,7 +50,7 @@ def _cache_key(question: str) -> str:
     return f"faq:{h}"
 
 
-def _get_cached_answer(question: str) -> Optional[str]:
+async def _get_cached_answer(question: str) -> Optional[str]:
     """从 Redis 获取缓存答案（文本哈希 + 语义相似度双重匹配）"""
     try:
         r = _get_redis()
@@ -58,17 +58,17 @@ def _get_cached_answer(question: str) -> Optional[str]:
         if exact:
             return exact
         # 语义缓存：通过 embedding 相似度查找
-        return _semantic_cache_lookup(question, r)
+        return await _semantic_cache_lookup(question, r)
     except Exception:
         return None
 
 
-def _semantic_cache_lookup(question: str, r) -> Optional[str]:
+async def _semantic_cache_lookup(question: str, r) -> Optional[str]:
     """语义相似度匹配缓存"""
     try:
-        import json, asyncio
+        import json
         from app.services.llm_service import get_embeddings
-        emb = asyncio.run(get_embeddings([question]))
+        emb = await get_embeddings([question])
         if not emb:
             return None
         q_vec = emb[0]
@@ -100,16 +100,15 @@ def _semantic_cache_lookup(question: str, r) -> Optional[str]:
     return None
 
 
-def _set_cached_answer(question: str, answer: str, ttl: int = 86400):
+async def _set_cached_answer(question: str, answer: str, ttl: int = 86400):
     """写入 Redis 缓存（默认 24h）"""
     try:
         r = _get_redis()
         r.setex(_cache_key(question), ttl, answer)
-        # 同时缓存 embedding 向量用于语义匹配
         try:
-            import json, asyncio
+            import json
             from app.services.llm_service import get_embeddings
-            emb = asyncio.run(get_embeddings([question]))
+            emb = await get_embeddings([question])
             if emb:
                 r.setex(f"faq:emb:{_cache_key(question)}", ttl, json.dumps(emb[0]))
         except Exception:
@@ -208,12 +207,12 @@ def _search_faq_bm25(query: str, db: Session, top_k: int = 5) -> Optional[str]:
 # 统一 FAQ 查询入口
 # ============================================================
 
-def search_faq(db: Session, question: str, threshold: float = 0.85) -> Optional[str]:
+async def search_faq(db: Session, question: str, threshold: float = 0.85) -> Optional[str]:
     """
     FAQ 查询（Redis → BM25 + MySQL → 写 Redis）
     """
     # Step 1: Redis 缓存
-    cached = _get_cached_answer(question)
+    cached = await _get_cached_answer(question)
     if cached:
         return cached
 
@@ -221,13 +220,13 @@ def search_faq(db: Session, question: str, threshold: float = 0.85) -> Optional[
     answer = _search_faq_bm25(question, db)
     if answer:
         # Step 3: 写入 Redis
-        _set_cached_answer(question, answer)
+        await _set_cached_answer(question, answer)
         return answer
 
     return None
 
 
-def save_faq(db: Session, question: str, answer: str):
+async def save_faq(db: Session, question: str, answer: str):
     """保存 FAQ 到 MySQL + 更新 BM25 索引 + 写 Redis"""
     global _faq_version
     qh = hashlib.md5(question.strip().lower().encode()).hexdigest()
@@ -241,7 +240,7 @@ def save_faq(db: Session, question: str, answer: str):
     db.commit()
 
     # 写 Redis
-    _set_cached_answer(question, answer)
+    await _set_cached_answer(question, answer)
 
     # 标记索引需要重建
     _faq_version = 0

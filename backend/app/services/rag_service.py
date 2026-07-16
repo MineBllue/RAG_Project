@@ -40,7 +40,7 @@ async def rag_query(
     # FAQ 缓存命中
     if db:
         try:
-            cached = search_faq(db, question, threshold=0.9)
+            cached = await search_faq(db, question, threshold=0.9)
             if cached:
                 yield cached
                 return
@@ -177,5 +177,5 @@ async def rag_query(
 
     # 保存到 FAQ
     if db and full:
-        try: save_faq(db, question, full)
+        try: await save_faq(db, question, full)
         except: pass
