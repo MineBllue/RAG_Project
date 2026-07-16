@@ -23,13 +23,14 @@
   width: 380px;
   margin-left: 60px;
   background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(32px) saturate(2);
+  -webkit-backdrop-filter: blur(32px) saturate(2);
   border: 1px solid var(--glass-border);
   border-radius: 20px;
   padding: 40px 36px;
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.15),
+    0 8px 40px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 var(--glass-inner-glow)
 }
 
@@ -77,7 +78,7 @@
 .field input {
   width: 100%;
   padding: 11px 14px;
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.14);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 10px;
   color: #fff;
