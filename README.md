@@ -204,11 +204,32 @@ RAG-AICoding/
         minio_store.py                  # MinIO 存储
   frontend/
     src/
-      views/            # 页面组件
-        Chat.vue        # 对话页
-        Knowledge.vue   # 知识库管理
-        Login.vue       # 登录
-        Register.vue    # 注册
+      views/            # 页面（thin，仅编排）
+        Chat.vue        # 对话页 (99行)
+        Knowledge.vue   # 知识库管理 (143行)
+        Login.vue       # 登录 (94行)
+        Register.vue    # 注册 (98行)
+      components/       # 业务组件
+        layout/AppSidebar.vue          # 侧边栏导航 + 头像菜单
+        chat/ConversationList.vue      # 知识库选择 + 会话列表
+        chat/MessageBubble.vue         # 消息气泡（来源/评估）
+        chat/MessageInput.vue          # 输入框 + 发送
+        chat/ParamPanel.vue            # 推理参数面板
+        chat/ThinkingDots.vue          # 思考中动画
+        knowledge/KbListPanel.vue      # 知识库列表 + 创建
+        knowledge/UploadZone.vue       # 文档上传区
+        knowledge/DocumentList.vue     # 文档列表
+        knowledge/ChunkPanel.vue       # 分块查看/编辑
+        auth/AnimatedCharacters.vue    # 登录页卡通角色动画
+        shared/WelcomeScreen.vue       # 欢迎占位
+      composables/      # 业务逻辑 Hooks
+        useChat.ts              # 会话管理 + SSE 流式
+        useKnowledge.ts         # 知识库 CRUD
+        useUpload.ts            # 文件上传 + 进度
+      types/            # TypeScript 类型定义
+        api.ts / auth.ts / chat.ts / knowledge.ts
+      styles/           # 全局样式
+        variables.css / base.css / shared.css / auth.css
       api/              # API 封装
       stores/           # Pinia 状态管理
       router/           # 路由
@@ -224,7 +245,7 @@ RAG-AICoding/
 
 | 环境变量 | 默认值 | 说明 |
 |----------|--------|------|
-| `DASHSCOPE_API_KEY` | - | **必填**，通义千问 API Key |
+| `DASHSCOPE_API_KEY` | 系统环境变量 | **必填**，通义千问 API Key（从环境变量读取，不在 .env 中配置） |
 | `MYSQL_HOST` | localhost | MySQL 地址 |
 | `MYSQL_PASSWORD` | ww232315 | MySQL 密码 |
 | `REDIS_HOST` | localhost | Redis 地址 |
