@@ -37,9 +37,9 @@ const emit = defineEmits<{
 .sec { margin-bottom: 28px }
 .sec h3 { font-size: 12px; font-weight: 600; margin-bottom: 8px; color: var(--text-secondary) }
 .doc-list { display: flex; flex-direction: column; gap: 2px }
-.doc-row { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 8px; cursor: pointer; transition: all .2s }
-.doc-row:hover { background: var(--bg-hover) }
-.doc-row.active { background: var(--accent-soft) }
+.doc-row { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; cursor: pointer; transition: all .2s; background: rgba(255,255,255,0.35) }
+.doc-row:hover { background: rgba(255,255,255,0.6) }
+.doc-row.active { background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.15) }
 .doc-icon { width: 24px; height: 24px; border-radius: 5px; background: var(--gold-soft); color: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0 }
 .doc-name { flex: 1; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
 .doc-st { font-size: 10px; padding: 2px 6px; border-radius: 3px; background: var(--bg-root); color: var(--text-tertiary) }

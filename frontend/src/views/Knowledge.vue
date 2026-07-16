@@ -138,5 +138,5 @@ onMounted(loadKBs)
 .toast { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); background: #ef4444; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 13px; z-index: 1000; cursor: pointer; box-shadow: 0 4px 12px rgba(239,68,68,.3); animation: tIn .3s cubic-bezier(.4,0,.2,1); max-width: 500px; text-align: center }
 @keyframes tIn { from { opacity: 0; transform: translateX(-50%) translateY(-10px) } to { opacity: 1; transform: translateX(-50%) translateY(0) } }
 .error-bar { color: var(--red); font-size: 12px; margin-bottom: 12px; padding: 8px 12px; background: var(--red-soft); border-radius: 6px }
-.content { flex: 1; overflow-y: auto; padding: 20px 24px }
+.content { flex: 1; overflow-y: auto; padding: 20px 24px; background: transparent }
 </style>

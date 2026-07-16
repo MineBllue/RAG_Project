@@ -80,8 +80,8 @@ function handleSave() {
 .jump-inp { width: 48px; padding: 3px 6px; background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 4px; color: var(--text-primary); font-size: 11px; font-family: inherit; outline: none; text-align: center }
 .jump-btn { padding: 3px 8px; background: var(--accent); color: #fff; border: none; border-radius: 4px; font-size: 10px; cursor: pointer; font-family: inherit }
 .chunk-list { display: flex; flex-direction: column; gap: 6px }
-.chunk-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; overflow: hidden; transition: all .2s }
-.chunk-card:hover { border-color: var(--border-card) }
+.chunk-card { background: rgba(255,255,255,0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,0.04); border-radius: 10px; overflow: hidden; transition: all .2s }
+.chunk-card:hover { border-color: rgba(0,0,0,0.1); background: rgba(255,255,255,0.6) }
 .chunk-hd { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: var(--bg-hover); font-size: 10px; color: var(--text-tertiary); font-weight: 600 }
 .chunk-act { display: flex; gap: 4px }
 .chunk-act button { padding: 2px 8px; border-radius: 4px; border: none; font-size: 10px; cursor: pointer; background: var(--bg-card); color: var(--text-secondary); font-family: inherit }
