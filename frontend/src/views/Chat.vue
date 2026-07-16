@@ -73,7 +73,7 @@ onMounted(() => { loadKBs(); loadConversations() })
         <button class="hdr-btn" :class="{active:showParams}" @click="showParams=!showParams">参数</button>
       </header>
       <div class="chat-area" ref="chatArea">
-        <WelcomeScreen v-if="messages.length===0" title="InnerQA" subtitle="选择知识库，开始检索问答"/>
+        <WelcomeScreen v-if="messages.length===0" title="4组项目" subtitle="选择知识库，开始检索问答"/>
         <MessageBubble
           v-for="(msg,i) in messages"
           :key="i"
