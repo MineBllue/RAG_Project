@@ -1,9 +1,11 @@
 import httpx
 import json
+import logging
 from typing import AsyncGenerator, Optional
 from app.core.config import get_settings
 
 settings = get_settings()
+logger = logging.getLogger(__name__)
 
 DASHSCOPE_API_BASE = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 
@@ -29,6 +31,7 @@ async def chat_stream(
         "max_tokens": max_tokens,
         "stream": True,
     }
+    logger.debug("LLM call: model=%s, msgs=%d, temp=%.2f, max_tokens=%d", model_name, len(messages), temperature, max_tokens)
 
     async with httpx.AsyncClient(timeout=120.0) as client:
         async with client.stream("POST", f"{DASHSCOPE_API_BASE}/chat/completions", headers=headers, json=payload) as response:
@@ -62,6 +65,7 @@ async def get_embeddings(texts: list[str]) -> list[list[float]]:
         r.ping()
     except Exception:
         r = None
+        logger.debug("Redis 不可用，embedding 缓存已禁用")
 
     for i, text in enumerate(texts):
         key = f"emb:{_hashlib.md5(text.encode()).hexdigest()}" if r else None

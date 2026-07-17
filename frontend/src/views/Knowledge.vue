@@ -38,7 +38,10 @@ async function onSelectKB(id: number) {
 }
 
 async function onUpload() {
-  await doUpload(activeKbId.value!, showError, () => selectKB(activeKbId.value!))
+  await doUpload(activeKbId.value!, showError, () => {
+    selectKB(activeKbId.value!)
+    loadKBs()
+  })
 }
 
 async function selectDoc(id: number) {

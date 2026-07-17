@@ -1,4 +1,6 @@
 import json
+import asyncio
+import logging
 from typing import List, AsyncGenerator, Optional
 from sqlalchemy.orm import Session
 from app.core.config import get_settings
@@ -8,10 +10,10 @@ from app.services.llm_service import chat_stream
 from app.services.query_rewriter import rewrite_query
 from app.services.reranker import rerank
 from app.services.evaluator import run_evaluation, _llm_evaluate, apply_llm_result
-from app.services.faq_service import search_faq, save_faq
 from app.services.retrieval_strategies import select_strategy, execute_strategy
 
 settings = get_settings()
+logger = logging.getLogger(__name__)
 
 RAG_PROMPT = """你是一个企业知识库智能助手。请根据以下知识库内容回答用户问题。
 要求：基于内容回答，专业准确简洁，使用中文。引用来源时在句末标注序号，如 [1]、[2]。
@@ -37,14 +39,21 @@ async def rag_query(
 ) -> AsyncGenerator[str, None]:
     sources, queries = [], [question]
 
-    # FAQ 缓存命中
+    # FAQ 缓存命中：仅命中 stats-based FAQ（管理员手动加入或自动达阈值）
     if db:
         try:
-            cached = await search_faq(db, question, threshold=0.9)
+            import concurrent.futures
+            from app.services.faq_stats_service import check_stats_cache, record_query
+            loop = asyncio.get_running_loop()
+            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+                await loop.run_in_executor(pool, record_query, db, question)
+            cached = await check_stats_cache(question)
             if cached:
+                logger.info("FAQ cache HIT: '%s' → %d chars", question[:60], len(cached))
                 yield cached
                 return
-        except: pass
+        except Exception:
+            pass
 
     # 意图识别
     if use_intent:
@@ -52,15 +61,18 @@ async def rag_query(
             from app.services.intent_recognizer import recognize_intent as llm_intent
             need_rag = await llm_intent(question)
             if not need_rag:
+                logger.info("Intent: non-RAG '%s', returning greeting", question[:40])
                 yield "您好！我是企业知识库助手，请问有什么技术问题需要我帮您检索？"
                 return
-        except: pass
+        except:
+            pass
 
     # 策略选择: 直接 / HyDE / 子问题 / 回溯
     strategy = "direct"
     if use_rewrite and kb_ids:
         try:
-            strategy = await select_strategy(question)
+            strategy = select_strategy(question)
+            logger.info("Strategy '%s' for '%s'", strategy, question[:60])
         except:
             pass
 
@@ -74,6 +86,7 @@ async def rag_query(
 
     # 执行检索策略
     items = await execute_strategy(strategy, question, kb_ids, top_k=8)
+    logger.debug("Retrieved %d items via strategy '%s'", len(items), strategy)
 
     # Reranker 精排
     if use_rerank and len(items) > 1:
@@ -85,21 +98,22 @@ async def rag_query(
                     it["final_score"] = rm[it["text"]]
             items.sort(key=lambda x: x.get("final_score", 0), reverse=True)
             items = items[:5]
+            logger.debug("Reranked: %d → %d items", len(items), len(ranked))
         except: pass
 
     all_contexts = [it["text"] for it in items]
 
     sources = [{
         "text": it["text"][:150],
-        "score": round(max(
-            it.get("final_score", 0) or 0,
-            it.get("dense_score", 0) or 0,
-            it.get("score", 0) or 0,
-        ), 3),
-        "kb_id": it.get("kb_id") or (kb_ids[0] if kb_ids else 0),
+        "score": round(max(filter(None, [
+            it.get("final_score"),
+            it.get("dense_score"),
+            it.get("rerank_score"),
+            it.get("score"),
+        ])), 3) if any(it.get(k) for k in ["final_score","dense_score","rerank_score","score"]) else 0,
+        "kb_id": it.get("kb_id") if it.get("kb_id") else (kb_ids[0] if kb_ids else 0),
         "doc_id": it.get("doc_id", 0),
     } for it in items]
-    print(f"[rag_query] 原始检索分数: {[(it.get('final_score'), it.get('dense_score'), it.get('score')) for it in items]}")
 
     # 来源名称
     source_info = []
@@ -112,15 +126,17 @@ async def rag_query(
             for s in sources:
                 if s.get("doc_id") and s["doc_id"] not in doc_map:
                     d = _db.query(Document).filter(Document.id == s["doc_id"]).first()
-                    doc_map[s["doc_id"]] = d.filename if d else "未知"
+                    doc_map[s["doc_id"]] = d.filename if d else f"文档#{s['doc_id']}"
             seen = set()
             for s in sources:
                 k2 = (s.get("kb_id", 0), s.get("doc_id", 0))
-                if k2 not in seen and s.get("kb_id"):
+                if k2 not in seen and (s.get("kb_id") or s.get("doc_id")):
                     seen.add(k2)
+                    kb_name = kb_map.get(s["kb_id"], f"知识库{s['kb_id']}") if s.get("kb_id") else "未知知识库"
+                    doc_name = doc_map.get(s.get("doc_id", 0), f"文档#{s.get('doc_id', 0)}")
                     source_info.append({
-                        "kb_name": kb_map.get(s["kb_id"], f"知识库{s['kb_id']}"),
-                        "doc_name": doc_map.get(s.get("doc_id", 0)) if s.get("doc_id") and s["doc_id"] in doc_map else "文档片段",
+                        "kb_name": kb_name,
+                        "doc_name": doc_name,
                         "score": s["score"],
                     })
         finally:
@@ -136,35 +152,25 @@ async def rag_query(
     # 消息
     msgs = (history_messages[-(history_rounds * 2):] if history_messages else []) + [{"role": "user", "content": build_rag_prompt(question, [ctx])}]
 
-    # 流式
+    # 流式生成
     full = ""
     async for chunk in chat_stream(msgs, temperature=temperature, top_p=top_p, max_tokens=max_tokens):
-
         full += chunk; yield chunk
-
+    logger.info("RAG answer generated: '%s' → %d chars", question[:60], len(full))
 
     # 评估 + 来源
     eval_result = None
     try:
-
         eval_result = run_evaluation(question, full, all_contexts, use_llm=False)
-
-        # LLM 精评
-
         llm_scores = await _llm_evaluate(question, full, all_contexts)
-
         if llm_scores:
-
            eval_result = apply_llm_result(eval_result, llm_scores)
     except:
-
         pass
-
 
     payload = {"sources": source_info, "evaluation": None}
     if eval_result:
         payload["evaluation"] = {
-
             "context_relevance": eval_result["context_relevance"],
             "faithfulness": eval_result["faithfulness"],
             "answer_relevance": eval_result.get("answer_relevance", 0),
@@ -174,8 +180,13 @@ async def rag_query(
         }
     yield "\n\n---SOURCES---\n" + json.dumps(payload, ensure_ascii=False)
 
-
-    # 保存到 FAQ
+    # 保存到 FAQ 并更新统计（带完整答案）
     if db and full:
-        try: await save_faq(db, question, full)
-        except: pass
+        try:
+            from app.services.faq_stats_service import update_answer
+            import concurrent.futures
+            loop = asyncio.get_running_loop()
+            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+                await loop.run_in_executor(pool, update_answer, db, question, full)
+        except Exception:
+            pass

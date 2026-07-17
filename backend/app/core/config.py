@@ -46,9 +46,16 @@ class Settings(BaseSettings):
     chunk_size: int = 500
     chunk_overlap: int = 50
 
+    # FAQ 高频统计
+    faq_stats_window_days: int = 7          # 统计窗口（天）
+    faq_stats_similarity_threshold: float = 0.88  # BM25+Softmax 相似度阈值
+    faq_stats_cache_threshold: int = 10     # 自动写 Redis 的命中次数阈值
+    faq_stats_redis_ttl: int = 86400 * 7    # Redis 缓存过期时间（秒，默认 7 天）
+
     # File storage
     upload_dir: str = "./data/uploads"
     data_dir: str = "../data"
+    max_upload_size_mb: int = 50          # 单个文件最大上传大小（MB）
 
     @property
     def mysql_url(self) -> str:

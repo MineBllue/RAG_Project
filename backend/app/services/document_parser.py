@@ -27,15 +27,26 @@ SUPPORTED_EXTS = {".pdf", ".pptx", ".ppt", ".md", ".markdown", ".txt", ".docx", 
 def extract_text_from_pdf(file_path: str) -> str:
     try:
         import pdfplumber
+        # 提前检测空文件
+        if os.path.getsize(file_path) == 0:
+            raise ValueError("文档内容为空（文件大小为 0 字节），请检查文件是否损坏")
         parts = []
-        with pdfplumber.open(file_path) as pdf:
+        with pdfplumber.open(file_path, password="") as pdf:
             for page in pdf.pages:
                 t = page.extract_text()
                 if t:
                     parts.append(t)
-        return "\n".join(parts)
-    except Exception:
-        raise ValueError("PDF 解析失败，文件可能已损坏或加密")
+        text = "\n".join(parts)
+        if not text.strip():
+            raise ValueError("PDF 无法提取文字，可能为扫描件（纯图片）或加密文档，请检查文件")
+        return text
+    except ValueError:
+        raise
+    except Exception as e:
+        msg = str(e)
+        if "password" in msg.lower() or "encrypt" in msg.lower():
+            raise ValueError("PDF 文档已加密，请先解密后再上传")
+        raise ValueError(f"PDF 解析失败: {msg}")
 
 
 def extract_text_from_pptx(file_path: str) -> str:
@@ -628,6 +639,86 @@ def split_text_parent_child(text: str, chunk_size: int = None, chunk_overlap: in
     return all_chunks
 
 
+
+# ============================================================
+# CSV 智能切块 — 保护表格结构不被切碎
+# ============================================================
+
+def split_csv_table(text: str, chunk_size: int = None, chunk_overlap: int = None) -> List[Dict[str, Any]]:
+    """
+    CSV 表格智能切块
+
+    核心原则：不破坏表格结构，切分粒度可控
+    - 表格 < chunk_size → 单 chunk（完整表格）
+    - 表格 > chunk_size → 按行分组切块，每个 chunk 重复表头
+    """
+    cs = chunk_size or settings.chunk_size
+    lines = text.split("\n")
+    chunks = []
+    chunk_idx = 0
+
+    # 解析表格结构：找表头行和分隔行
+    header_line = -1
+    sep_line = -1
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        if not stripped:
+            continue
+        if "---" in stripped and "|" in stripped:
+            sep_line = i
+            header_line = i - 1
+            break
+        if "|" in stripped and header_line < 0:
+            header_line = i
+
+    # 不是标准 Markdown 表格，降级为普通切分
+    if header_line < 0:
+        return split_text(text, cs, chunk_overlap)
+
+    header = lines[header_line].strip()
+    table_start = header_line
+    data_start = sep_line + 1 if sep_line > header_line else header_line + 1
+    data_lines = [l for l in lines[data_start:] if l.strip()]
+
+    # 小表格：一个 chunk 搞定
+    full_len = len(header) + sum(len(l) for l in data_lines)
+    if full_len <= cs and len(data_lines) <= 50:
+        chunks.append({
+            "chunk_index": chunk_idx,
+            "content": text.strip(),
+            "chunk_hash": hashlib.md5(text.strip().encode()).hexdigest(),
+            "metadata": json.dumps({"type": "csv_table", "columns": _csv_column_names(header), "rows": len(data_lines), "split": "full"}, ensure_ascii=False),
+        })
+        return chunks
+
+    # 大表格：按行分组切块，每个块带表头
+    rows_per_chunk = max(1, (cs - len(header) - 50) // max(1, min(len(l) for l in data_lines) if data_lines else 50))
+    header_block = lines[table_start:data_start]  # 表头+分隔行
+
+    for i in range(0, len(data_lines), rows_per_chunk):
+        batch = header_block + data_lines[i:i + rows_per_chunk]
+        chunk_text = "\n".join(batch).strip()
+        chunks.append({
+            "chunk_index": chunk_idx,
+            "content": chunk_text,
+            "chunk_hash": hashlib.md5(chunk_text.encode()).hexdigest(),
+            "metadata": json.dumps({
+                "type": "csv_table",
+                "columns": _csv_column_names(header),
+                "row_start": i + 1,
+                "row_end": min(i + rows_per_chunk, len(data_lines)),
+                "total_rows": len(data_lines),
+            }, ensure_ascii=False),
+        })
+        chunk_idx += 1
+
+    return chunks
+
+
+def _csv_column_names(header_line: str) -> List[str]:
+    """提取 CSV 表格的列名"""
+    return [c.strip() for c in header_line.split("|") if c.strip() and c.strip() != ""]
+
 # ============================================================
 # 策略映射 & 文档处理入口
 # ============================================================
@@ -637,6 +728,7 @@ CHUNK_METHODS = {
     "semantic": split_text_semantic,
     "markdown": split_text_markdown,
     "parent_child": split_text_parent_child,
+    "csv_table": split_csv_table,
 }
 
 
@@ -657,9 +749,14 @@ def process_document(file_path: str, chunk_size: int = None,
         "child_count": int,
     }
     """
+    ext = Path(file_path).suffix.lower()
     text = extract_text(file_path)
     if not text or not text.strip():
         raise ValueError("文档内容为空，无法提取文字。请确认文件包含可读文本")
+
+    # CSV 自动使用表格感知切块策略，保护表格结构
+    if ext == ".csv":
+        chunk_method = "csv_table"
 
     method_fn = CHUNK_METHODS.get(chunk_method, split_text)
     chunks = method_fn(text, chunk_size, chunk_overlap)

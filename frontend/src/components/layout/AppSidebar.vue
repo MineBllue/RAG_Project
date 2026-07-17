@@ -7,7 +7,7 @@ import { useAvatar } from '../../composables/useAvatar'
 const router = useRouter()
 const route = useRoute()
 const auth = useAuthStore()
-const { avatar, setAvatar } = useAvatar()
+const { avatar, setAvatar, uploadAvatar } = useAvatar()
 
 const showMenu = ref(false)
 const avatarInput = ref<HTMLInputElement | null>(null)
@@ -25,12 +25,15 @@ function triggerUpload() {
   avatarInput.value?.click()
 }
 
-function onAvatarChange(e: Event) {
+async function onAvatarChange(e: Event) {
   const file = (e.target as HTMLInputElement).files?.[0]
   if (!file) return
+  // 先本地预览
   const reader = new FileReader()
   reader.onload = () => setAvatar(reader.result as string)
   reader.readAsDataURL(file)
+  // 再上传到后端持久化
+  await uploadAvatar(file)
 }
 
 function doLogout() {
@@ -59,6 +62,12 @@ onUnmounted(() => document.removeEventListener('click', closeMenu))
         </svg>
         <span>知识库</span>
       </div>
+      <div v-if="auth.user?.is_admin" :class="['s-item', route.path === '/faq-management' ? 'active' : '']" @click="router.push('/faq-management')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 20V10M18 20V4M6 20v-4"/>
+        </svg>
+        <span>高频问答</span>
+      </div>
     </div>
     <div class="avatar-wrap">
       <div class="s-avatar" @click="toggleMenu">
@@ -68,7 +77,6 @@ onUnmounted(() => document.removeEventListener('click', closeMenu))
       <div v-if="showMenu" class="avatar-menu">
         <div class="menu-item" @click="triggerUpload">修改头像</div>
         <input ref="avatarInput" type="file" accept="image/*" hidden @change="onAvatarChange" />
-        <div class="menu-item">个人设置</div>
         <div class="menu-divider"></div>
         <div class="menu-item danger" @click="doLogout">退出登录</div>
       </div>

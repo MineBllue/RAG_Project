@@ -1,12 +1,22 @@
 <script setup lang="ts">
+import {ref} from 'vue'
+
 const modelValue = defineModel<string>('modelValue', { default: '' })
 defineProps<{ selectedKbCount: number; sending: boolean }>()
 const emit = defineEmits<{ send: [] }>()
+
+const inputEl = ref<HTMLInputElement | null>(null)
 
 function handleSend() {
   if (!modelValue.value.trim()) return
   emit('send')
 }
+
+function focus() {
+  inputEl.value?.focus()
+}
+
+defineExpose({ focus })
 </script>
 
 <template>
@@ -14,6 +24,7 @@ function handleSend() {
     <div class="input-row">
       <div class="input-box">
         <input
+          ref="inputEl"
           v-model="modelValue"
           type="text"
           placeholder="输入你的问题，Enter 发送..."

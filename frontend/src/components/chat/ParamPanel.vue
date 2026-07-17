@@ -10,15 +10,15 @@ const show = defineModel<boolean>('show', { default: false })
   <aside v-if="show" class="panel-r">
     <div class="pr-title">推理参数</div>
     <div class="pr-group">
-      <div class="pr-row"><span>Temperature</span><span class="pr-val">{{ temperature }}</span></div>
+      <div class="pr-row"><span>Temperature(温度)</span><span class="pr-val">{{ temperature }}</span></div>
       <input type="range" class="pr-slider" min="0" max="1" step="0.01" v-model.number="temperature" />
     </div>
     <div class="pr-group">
-      <div class="pr-row"><span>Top P</span><span class="pr-val">{{ topP }}</span></div>
+      <div class="pr-row"><span>Top P(控制候选词范围)</span><span class="pr-val">{{ topP }}</span></div>
       <input type="range" class="pr-slider" min="0" max="1" step="0.01" v-model.number="topP" />
     </div>
     <div class="pr-group">
-      <div class="pr-row"><span>Max Tokens</span><span class="pr-val">{{ maxTokens }}</span></div>
+      <div class="pr-row"><span>Max Tokens(回答最大长度)</span><span class="pr-val">{{ maxTokens }}</span></div>
       <input type="range" class="pr-slider" min="256" max="8192" step="256" v-model.number="maxTokens" />
     </div>
     <div class="pr-group">

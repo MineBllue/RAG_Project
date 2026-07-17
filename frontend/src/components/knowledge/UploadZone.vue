@@ -79,7 +79,7 @@ const emit = defineEmits<{
 <style scoped>
 .sec { margin-bottom: 28px }
 .sec h3 { font-size: 12px; font-weight: 600; margin-bottom: 8px; color: var(--text-secondary) }
-.fmts { font-size: 10px; color: var(--text-muted); margin-bottom: 8px }
+.fmts { font-size: 10px; color: var(--text-secondary); margin-bottom: 8px }
 .upload-zone { border: 2px dashed rgba(0,0,0,0.1); border-radius: 14px; padding: 28px; text-align: center; cursor: pointer; transition: all .25s; color: var(--text-tertiary); font-size: 13px; display: flex; flex-direction: column; align-items: center; gap: 8px; background: rgba(255,255,255,0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px) }
 .upload-zone:hover { border-color: rgba(99,102,241,0.4); background: rgba(99,102,241,0.06); color: var(--text-secondary) }
 .upload-zone.has { border-color: rgba(99,102,241,0.4); border-style: solid; background: rgba(99,102,241,0.08) }

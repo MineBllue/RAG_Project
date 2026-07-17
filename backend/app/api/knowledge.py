@@ -12,7 +12,7 @@ from app.core.database import get_db
 from app.core.auth import get_current_user
 from app.models.user import User
 from app.models.knowledge_base import KnowledgeBase, Document, DocumentChunk, DocumentStatus
-from app.services.document_parser import process_document
+from app.services.document_parser import process_document, SUPPORTED_EXTS
 from app.services.deep_parser import deep_parse
 from app.services.image_rag_qa import image_qa_query
 from app.services.deep_parser import ocr_image
@@ -145,12 +145,22 @@ async def upload_document(
         raise HTTPException(status_code=404, detail="知识库不存在")
 
     ext = os.path.splitext(file.filename)[1].lower()
+
+    # 文件大小校验（先读少量内容检查大小）
+    content = await file.read()
+    if len(content) == 0:
+        raise HTTPException(status_code=400, detail="文件内容为空，请上传有效文档")
+    max_bytes = settings.max_upload_size_mb * 1024 * 1024
+    if len(content) > max_bytes:
+        raise HTTPException(status_code=413, detail=f"文件超过最大限制 {settings.max_upload_size_mb}MB")
+
     safe_filename = f"{uuid.uuid4().hex}{ext}"
     upload_dir = os.path.join(settings.upload_dir, str(kb_id))
     os.makedirs(upload_dir, exist_ok=True)
     file_path = os.path.join(upload_dir, safe_filename)
 
-    content = await file.read()
+    if ext not in SUPPORTED_EXTS and ext != ".zip":
+        raise HTTPException(status_code=400, detail=f"不支持的文件格式 '{ext}'，支持: {', '.join(sorted(SUPPORTED_EXTS))}, .zip")
 
     # 先创建 Document 记录拿 doc.id（后续 OCR/MinIO 上传需要）
     doc = Document(
@@ -166,6 +176,7 @@ async def upload_document(
     db.refresh(doc)
     doc.chunk_method = chunk_method
     db.commit()
+    logger.info("Document uploaded: '%s' (id=%d, kb=%d, size=%d, method=%s)", doc.filename, doc.id, kb_id, doc.file_size, chunk_method)
 
     # ZIP 包支持：解压后找 .md + .assets 文件夹
     if ext == ".zip":
@@ -329,6 +340,7 @@ async def upload_documents_batch(
     user: User = Depends(get_current_user),
 ):
     """批量上传文档"""
+    max_bytes = settings.max_upload_size_mb * 1024 * 1024
     kb = db.query(KnowledgeBase).filter(KnowledgeBase.id == kb_id).first()
     if not kb:
         raise HTTPException(status_code=404, detail="知识库不存在")
@@ -338,10 +350,14 @@ async def upload_documents_batch(
 
     async def process_one(file: UploadFile) -> dict:
         import re, shutil, uuid
+        content = await file.read()
+        if len(content) > max_bytes:
+            return {"filename": file.filename, "ok": False, "error": f"超过 {settings.max_upload_size_mb}MB 限制"}
+        if len(content) == 0:
+            return {"filename": file.filename, "ok": False, "error": "文件内容为空"}
         ext = os.path.splitext(file.filename)[1].lower()
         safe_filename = f"{uuid.uuid4().hex}{ext}"
         file_path = os.path.join(upload_dir, safe_filename)
-        content = await file.read()
         with open(file_path, "wb") as f:
             f.write(content)
 
@@ -419,7 +435,8 @@ async def upload_documents_batch(
             insert_vectors(kb_id, records)
             return {"filename": file.filename, "status": "completed", "chunks": len(chunks)}
         except Exception as e:
-            doc.status = DocumentStatus.FAILED.value; db.commit()
+            doc.status = DocumentStatus.FAILED.value
+            db.commit()
             return {"filename": file.filename, "status": "failed", "error": str(e)}
 
     results = []
@@ -427,7 +444,15 @@ async def upload_documents_batch(
         r = await process_one(file)
         results.append(r)
 
-    return {"kb_id": kb_id, "total": len(results), "succeeded": sum(1 for r in results if r["status"] == "completed"), "failed": sum(1 for r in results if r["status"] == "failed"), "results": results}
+    succeeded = sum(1 for r in results if r["status"] == "completed")
+    failed = len(results) - succeeded
+
+    # 全部失败时返回 HTTP 422，前端才能感知错误
+    if failed > 0 and succeeded == 0:
+        errors = [f"{r['filename']}: {r.get('error', '未知错误')}" for r in results]
+        raise HTTPException(status_code=422, detail=f"全部 {failed} 个文档解析失败: {'; '.join(errors)}")
+
+    return {"kb_id": kb_id, "total": len(results), "succeeded": succeeded, "failed": failed, "results": results}
 
 
 # ==================== 图片 RAG 问答 ====================

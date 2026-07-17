@@ -2,6 +2,7 @@
 export interface User {
   id: number
   username: string
+  is_admin: boolean
 }
 
 /** 登录请求参数 */
@@ -16,8 +17,10 @@ export interface LoginParams {
 export interface RegisterParams {
   username: string
   password: string
+  confirm_password: string
   captcha_key: string
   captcha_code: string
+  is_admin: boolean
 }
 
 /** 登录/注册响应 */
@@ -26,6 +29,8 @@ export interface AuthResponse {
   refresh_token: string
   user_id: number
   username: string
+  is_admin: boolean
+  avatar_url?: string | null
 }
 
 /** 验证码响应 */

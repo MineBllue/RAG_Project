@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, onMounted} from 'vue'
+import {ref, onMounted, nextTick} from 'vue'
 import {useRouter} from 'vue-router'
 import {useAuthStore} from '../stores/auth'
 import {useAvatar} from '../composables/useAvatar'
@@ -28,6 +28,7 @@ const topP = ref(0.85)
 const maxTokens = ref(2048)
 const historyRounds = ref(5)
 const showParams = ref(false)
+const messageInputRef = ref<InstanceType<typeof MessageInput> | null>(null)
 
 async function loadKBs() {
   try { const r = await listKBs(); kbList.value = r.data as KnowledgeBase[] } catch {}
@@ -45,6 +46,15 @@ function handleSend() {
     maxTokens: maxTokens.value,
     historyRounds: historyRounds.value,
   })
+  nextTick(() => messageInputRef.value?.focus())
+}
+
+function selectAllKb() {
+  selectedKbIds.value = kbList.value.map(k => k.id)
+}
+
+function deselectAllKb() {
+  selectedKbIds.value = []
 }
 
 onMounted(() => { loadKBs(); loadConversations() })
@@ -59,6 +69,8 @@ onMounted(() => { loadKBs(); loadConversations() })
       :conversations="conversations"
       :active-conv-id="activeConvId"
       @toggle-kb="toggleKb"
+        @select-all-kb="selectAllKb"
+        @deselect-all-kb="deselectAllKb"
       @select-conv="selectConv"
       @delete-conv="delConv"
       @new-conv="newConv"
@@ -82,7 +94,7 @@ onMounted(() => { loadKBs(); loadConversations() })
           :username="auth.user?.username||'U'"
         />
       </div>
-      <MessageInput v-model="inputText" :selected-kb-count="selectedKbIds.length" :sending="sending" @send="handleSend"/>
+      <MessageInput ref="messageInputRef" v-model="inputText" :selected-kb-count="selectedKbIds.length" :sending="sending" @send="handleSend"/>
     </main>
     <ParamPanel v-model:show="showParams" v-model:temperature="temperature" v-model:top-p="topP" v-model:max-tokens="maxTokens" v-model:history-rounds="historyRounds"/>
   </div>

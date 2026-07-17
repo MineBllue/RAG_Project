@@ -14,6 +14,7 @@ class RegisterRequest(BaseModel):
     confirm_password: str = Field(..., min_length=6, max_length=100)
     captcha_key: str = Field(...)
     captcha_code: str = Field(...)
+    is_admin: bool = Field(False)
 
 
 class TokenResponse(BaseModel):
@@ -22,6 +23,8 @@ class TokenResponse(BaseModel):
     token_type: str = "bearer"
     user_id: int
     username: str
+    is_admin: bool = False
+    avatar_url: str | None = None
 
 
 class CaptchaResponse(BaseModel):

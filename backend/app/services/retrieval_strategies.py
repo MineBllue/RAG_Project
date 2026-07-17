@@ -144,35 +144,60 @@ async def step_back_retrieval(query: str, kb_ids: List[int], top_k: int = 5) -> 
 # 策略选择器
 # ============================================================
 
-STRATEGY_PROMPT = """你是一个检索策略路由器。根据用户问题的特征，选择最合适的检索策略。
+import jieba
+import logging
+from app.services.qa_stopwords import _init_jieba
 
-可选策略:
-- direct: 直接检索。适用于简单、明确的事实性问题。
-- hyde: 假设文档检索。适用于需要综合理解的问题，或问题表述不够精确的场景。
-- sub_question: 子问题拆分。适用于复合型、需要分步回答的复杂问题。
-- step_back: 回溯检索。适用于具体细节问题，需要先理解更广泛的背景知识。
+_init_jieba()
+logger = logging.getLogger(__name__)
 
-用户问题: {question}
+# 复杂问题特征词（通常需要子问题拆分）
+_COMPLEX_KEYWORDS = {
+    "比较", "对比", "区别", "异同", "优缺点", "利弊",
+    "为什么", "原因", "因素", "影响", "后果",
+    "如何", "怎么", "步骤", "流程", "方法", "方案",
+    "分别", "各自", "同时", "以及", "并且", "还有",
+}
 
-请只返回一个策略名称: direct, hyde, sub_question, step_back"""
+# 概念性问题特征词（通常适合 HyDE）
+_CONCEPT_KEYWORDS = {
+    "什么是", "是什么", "定义", "概念", "含义", "解释",
+    "概述", "总结", "归纳", "概括",
+}
+
+# 子问题拆分标记
+_SUB_MARKERS = {"？", "?", "；", ";", "，", ","}
 
 
-async def select_strategy(question: str) -> str:
-    """LLM 选择检索策略"""
-    try:
-        msgs = [{"role": "user", "content": STRATEGY_PROMPT.format(question=question)}]
-        result = ""
-        async for chunk in chat_stream(msgs, temperature=0.0, max_tokens=20):
-            result += chunk
-        result = result.strip().lower()
-        if "hyde" in result:
+def select_strategy(question: str) -> str:
+    """基于规则引擎选择检索策略（同步，零 LLM 调用）"""
+    q = question.strip()
+    q_len = len(q)
+
+    if q_len < 6:
+        return "direct"
+
+    # 多个问号/分号 → 子问题拆分（优先于概念关键词检测）
+    if sum(1 for c in q if c in _SUB_MARKERS) >= 2 and q_len > 15:
+        return "sub_question"
+
+    # 概念关键词 → HyDE（优先于长度判断，因为这些词明确表示概念性问题）
+    for kw in _CONCEPT_KEYWORDS:
+        if kw in q:
             return "hyde"
-        elif "sub" in result:
-            return "sub_question"
-        elif "step" in result or "back" in result:
-            return "step_back"
-    except Exception:
-        pass
+
+    words = set(jieba.lcut(q))
+
+    # 包含复杂特征词 + 有一定长度 → 子问题拆分
+    if q_len > 10 and words & _COMPLEX_KEYWORDS:
+        return "sub_question"
+
+    # 非短问题 → HyDE（扩大检索覆盖）
+    if q_len >= 6:
+        logger.debug("Strategy: medium length → hyde for '%s'", q[:50])
+        return "hyde"
+
+    logger.debug("Strategy: default direct for '%s'", q[:20])
     return "direct"
 
 

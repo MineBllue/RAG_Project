@@ -15,6 +15,7 @@ const confirmPassword = ref('')
 const captchaCode = ref('')
 const captchaKey = ref('')
 const captchaImage = ref('')
+const isAdmin = ref(false)
 const errorMsg = ref('')
 const loading = ref(false)
 const showPassword = ref(false)
@@ -55,6 +56,7 @@ async function handleRegister() {
       confirm_password: confirmPassword.value,
       captcha_key: captchaKey.value,
       captcha_code: captchaCode.value,
+      is_admin: isAdmin.value,
     })
     router.push('/chat')
   } catch (e: any) {
@@ -115,6 +117,10 @@ async function handleRegister() {
           </div>
         </div>
         <div v-if="errorMsg" class="error">{{ errorMsg }}</div>
+        <label class="admin-check">
+          <input type="checkbox" v-model="isAdmin" />
+          <span class="checkbox-txt">注册为管理员</span>
+        </label>
         <button type="submit" :disabled="loading" class="btn-primary">
           {{ loading ? '注册中...' : '注册' }}
         </button>
@@ -125,3 +131,14 @@ async function handleRegister() {
     </div>
   </div>
 </template>
+<style>
+.admin-check{
+  display: flex;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 10px;
+}
+.checkbox-txt {
+  font-size: 12px;
+  margin-left: 8px;
+}
+</style>

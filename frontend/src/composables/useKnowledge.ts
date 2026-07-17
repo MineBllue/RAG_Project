@@ -49,13 +49,14 @@ export function useKnowledge() {
     try {
       await deleteDocument(activeKbId.value, docId)
       if (activeDocId.value === docId) activeDocId.value = null
-      documents.value = documents.value.filter(d => d.id !== docId)
+      await selectKB(activeKbId.value)
+      await loadKBs()
     } catch {}
   }
 
   return {
     kbList, activeKbId, newKbName, newKbDesc, showCreateKb, creatingKb,
     documents, activeDocId,
-    loadKBs, selectKB, doCreateKB, doDeleteKB, doDeleteDoc,
+    loadKBs, selectKB, doCreateKB, doDeleteKB, doDeleteDoc, refreshDocs: selectKB,
   }
 }

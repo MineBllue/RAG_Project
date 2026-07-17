@@ -14,6 +14,8 @@ const emit = defineEmits<{
   'delete-conv': [id: number]
   'new-conv': []
   'go-knowledge': []
+  'select-all-kb': []
+  'deselect-all-kb': []
 }>()
 </script>
 
@@ -22,6 +24,10 @@ const emit = defineEmits<{
     <div class="pl-hd">
       知识库
       <button class="pl-btn" @click="emit('go-knowledge')">+</button>
+    </div>
+    <div class="kb-actions" v-if="kbList.length > 0">
+      <button class="kb-action-btn" @click="emit('select-all-kb')">全选</button>
+      <button class="kb-action-btn" @click="emit('deselect-all-kb')">取消</button>
     </div>
     <div class="kb-list">
       <div
@@ -60,6 +66,9 @@ const emit = defineEmits<{
 </template>
 
 <style scoped>
+.kb-actions { display: flex; gap: 4px; padding: 0 10px 6px }
+.kb-action-btn { padding: 2px 10px; border-radius: 4px; border: 1px solid var(--border-subtle); background: transparent; color: var(--text-secondary); font-size: 10px; cursor: pointer; font-family: inherit; transition: all .15s }
+.kb-action-btn:hover { background: var(--bg-hover); color: var(--text-primary) }
 .kb-list { padding: 0 6px 8px; max-height: 40%; overflow-y: auto }
 .kb-card { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; cursor: pointer; margin-bottom: 1px; transition: all .2s }
 .kb-card:hover { background: var(--bg-hover); transform: translateX(2px) }

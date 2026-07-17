@@ -73,3 +73,11 @@ export const deleteConversation = (id: number) => api.delete(`/chat/conversation
 export const updateConversation = (id: number, title: string) =>
   api.put(`/chat/conversations/${id}`, null, { params: { title } })
 export const getMessages = (convId: number) => api.get(`/chat/conversations/${convId}/messages`)
+
+// Admin FAQ Stats
+export const getFAQStats = (params?: Record<string, any>) => api.get('/admin/faq-stats', { params })
+export const addFAQToCache = (statsId: number) => api.post(`/admin/faq-stats/${statsId}/cache`)
+export const removeFAQFromCache = (statsId: number) => api.delete(`/admin/faq-stats/${statsId}/cache`)
+export const createManualFAQ = (data: { question: string; answer: string }) => api.post('/admin/faq-stats/manual', data)
+export const deleteFAQStats = (statsId: number) => api.delete(`/admin/faq-stats/${statsId}`)
+export const updateFAQAnswer = (statsId: number, answer: string) => api.put(`/admin/faq-stats/${statsId}/answer`, { answer })

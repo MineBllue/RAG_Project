@@ -5,10 +5,12 @@ Query 改写服务 - 4 种策略
 3. 子问题拆分：复杂问题拆为多个
 4. 回溯改写：用关键词组合搜索
 """
+import logging
 from app.services.llm_service import chat_stream
 from app.core.config import get_settings
 
 settings = get_settings()
+logger = logging.getLogger(__name__)
 
 REWRITE_PROMPTS = {
     "simplify": "请将以下问题简化，提取核心关键词，只返回简化后的问题（不超过20字）：\n{question}",
@@ -32,10 +34,12 @@ async def rewrite_query(question: str) -> list[str]:
         simplified = await _call_llm(REWRITE_PROMPTS["simplify"].format(question=question))
         if simplified and simplified != question:
             variants.append(simplified)
+            logger.debug("Rewrite simplify: '%s' → '%s'", question[:30], simplified[:30])
 
         hypothetical = await _call_llm(REWRITE_PROMPTS["hypothetical"].format(question=question))
         if hypothetical and hypothetical != question and hypothetical not in variants:
             variants.append(hypothetical)
+            logger.debug("Rewrite hypothetical: '%s' → '%s'", question[:30], hypothetical[:30])
 
         split_text = await _call_llm(REWRITE_PROMPTS["split"].format(question=question))
         for line in split_text.split("\n"):
@@ -46,6 +50,8 @@ async def rewrite_query(question: str) -> list[str]:
         retro = await _call_llm(REWRITE_PROMPTS["retrospect"].format(question=question))
         if retro and retro != question and retro not in variants:
             variants.append(retro)
+            logger.debug("Rewrite retrospect: '%s' → '%s'", question[:30], retro[:30])
     except Exception:
         pass
+    logger.debug("Rewrite: %d variants for '%s'", len(variants), question[:40])
     return variants[:5]

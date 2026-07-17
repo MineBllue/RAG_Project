@@ -1,23 +1,58 @@
 """
 重排序服务 - 使用 bge-reranker 对混合检索结果精排
 """
+import sys
 import math
 import os
 from typing import List
+import logging
 from FlagEmbedding import FlagReranker
 
 RERANKER_MODEL = "BAAI/bge-reranker-v2-m3"
+_reranker_loading = False
 _reranker = None
+_warmed_up = False
 
 
-def _get_reranker():
-    global _reranker
+def _get_reranker() -> FlagReranker:
+    global _reranker, _reranker_loading
     if _reranker is None:
+        # 避免并发重复加载
+        if _reranker_loading:
+            import time
+            for _ in range(300):
+                if _reranker is not None:
+                    return _reranker
+                time.sleep(0.1)
+        _reranker_loading = True
+        # 临时抑制 FlagEmbedding 的 "Loading weights" 进度条
+        _old_stderr = sys.stderr
+        sys.stderr = open(os.devnull, 'w')
         try:
             _reranker = FlagReranker(RERANKER_MODEL, use_fp16=True)
         except Exception:
             _reranker = FlagReranker(RERANKER_MODEL, use_fp16=False)
+        finally:
+            sys.stderr.close()
+            sys.stderr = _old_stderr
+        _reranker_loading = False
+        logging.getLogger(__name__).info("Reranker model loaded successfully")
     return _reranker
+
+
+def warmup_reranker():
+    """预热 reranker 模型（在 lifespan 启动时调用，避免首次请求阻塞）"""
+    global _warmed_up
+    if _warmed_up:
+        return
+    _warmed_up = True
+    logger = logging.getLogger(__name__)
+    logger.info("Reranker warmup: loading model (this may take a few seconds)...")
+    try:
+        _get_reranker()
+        logger.info("Reranker warmup: model loaded successfully")
+    except Exception:
+        logger.warning("Reranker warmup: failed to load model, will retry on first request")
 
 
 def rerank(query: str, documents: List[str], top_k: int = 5) -> List[dict]:

@@ -1,9 +1,11 @@
 
 from pymilvus import connections, Collection, CollectionSchema, FieldSchema, DataType, utility, AnnSearchRequest, WeightedRanker
+import logging
 from typing import List, Optional, Dict, Any, Set
 from app.core.config import get_settings
 
 settings = get_settings()
+logger = logging.getLogger(__name__)
 
 FIELD_ID = "id"
 FIELD_TEXT = "text"
@@ -20,9 +22,32 @@ DENSE_DIM = 1024
 INDEX_PARAMS = {"metric_type": "IP", "index_type": "IVF_FLAT", "params": {"nlist": 128}}
 SPARSE_INDEX_PARAMS = {"metric_type": "IP", "index_type": "SPARSE_INVERTED_INDEX"}
 
+_connected = False
+
 
 def _connect():
-    connections.connect(alias="default", host=settings.milvus_host, port=settings.milvus_port)
+    """连接 Milvus（幂等，已连接则跳过）"""
+    global _connected
+    if _connected:
+        return
+    try:
+        connections.connect(alias="default", host=settings.milvus_host, port=settings.milvus_port)
+        _connected = True
+        logger.info("Milvus connected: %s:%s", settings.milvus_host, settings.milvus_port)
+    except Exception:
+        logger.exception("Milvus connection failed")
+        raise
+
+
+def disconnect_milvus():
+    """断开 Milvus 连接（在 shutdown 时调用）"""
+    global _connected
+    if _connected:
+        try:
+            connections.disconnect("default")
+        except Exception:
+            pass
+        _connected = False
 
 
 def get_collection_name(kb_id: int) -> str:
@@ -34,9 +59,12 @@ def create_collection(kb_id: int):
     col_name = get_collection_name(kb_id)
     if utility.has_collection(col_name):
         col = Collection(col_name)
-        has_sparse = any(f.name == FIELD_SPARSE for f in col.schema.fields)
-        has_parent = any(f.name == FIELD_PARENT_ID for f in col.schema.fields)
-        if not has_sparse or not has_parent:
+        # 验证所有必需字段都存在，缺失任一字段则重建
+        required_fields = {FIELD_SPARSE, FIELD_PARENT_ID, FIELD_DOC_ID, FIELD_KB_ID, FIELD_CHUNK_ID, FIELD_TYPE, FIELD_CHUNK_TYPE}
+        existing_fields = {f.name for f in col.schema.fields}
+        missing = required_fields - existing_fields
+        if missing:
+            print(f"[vector_store] Collection {col_name} 缺少字段 {missing}，自动重建")
             utility.drop_collection(col_name)
         else:
             col.load()

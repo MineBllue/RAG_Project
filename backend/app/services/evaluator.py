@@ -11,6 +11,7 @@ RAG 评估服务
 from typing import List, Optional
 import json
 import re
+import jieba
 
 
 # ============================================================
@@ -18,30 +19,32 @@ import re
 # ============================================================
 
 def _keyword_context_relevance(query: str, contexts: List[str]) -> float:
-    """关键词重叠法评估上下文相关性"""
+    """基于 jieba 分词的上下文相关性评估"""
     if not contexts:
         return 0.0
-    keywords = set(query)
+    q_tokens = set(jieba.lcut(query))
     scores = []
     for ctx in contexts:
-        overlap = len(keywords & set(ctx)) / max(len(keywords), 1)
-        scores.append(min(overlap * 3, 1.0))
+        ctx_tokens = set(jieba.lcut(ctx))
+        overlap = len(q_tokens & ctx_tokens) / max(len(q_tokens), 1)
+        scores.append(min(overlap * 2, 1.0))
     return round(sum(scores) / len(scores), 4)
 
 
 def _keyword_faithfulness(answer: str, contexts: List[str]) -> float:
-    """关键词法评估忠实度"""
+    """基于 jieba 分词的忠实度评估"""
     if not contexts or not answer:
         return 0.0
     context_text = " ".join(contexts)
+    ctx_tokens = set(jieba.lcut(context_text))
     sentences = [s.strip() for s in answer.replace("。", "。\n").replace("！", "！\n").split("\n")
                  if len(s.strip()) > 5]
     if not sentences:
         return 0.0
     supported = 0
     for sent in sentences:
-        words = set(sent)
-        if len(words & set(context_text)) / max(len(words), 1) > 0.2:
+        sent_tokens = set(jieba.lcut(sent))
+        if len(sent_tokens & ctx_tokens) / max(len(sent_tokens), 1) > 0.2:
             supported += 1
     return round(supported / len(sentences), 4)
 
