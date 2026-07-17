@@ -9,7 +9,7 @@ from app.models.knowledge_base import KnowledgeBase, Document, DocumentStatus
 from app.services.llm_service import chat_stream
 from app.services.query_rewriter import rewrite_query
 from app.services.reranker import rerank
-from app.services.evaluator import run_evaluation, _llm_evaluate, apply_llm_result
+from app.services.evaluator import run_evaluation
 from app.services.retrieval_strategies import select_strategy, execute_strategy
 
 settings = get_settings()
@@ -39,7 +39,7 @@ async def rag_query(
 ) -> AsyncGenerator[str, None]:
     sources, queries = [], [question]
 
-    # FAQ 缓存命中：仅命中 stats-based FAQ（管理员手动加入或自动达阈值）
+    # FAQ 缓存命中
     if db:
         try:
             import concurrent.futures
@@ -67,7 +67,7 @@ async def rag_query(
         except:
             pass
 
-    # 策略选择: 直接 / HyDE / 子问题 / 回溯
+    # 策略选择
     strategy = "direct"
     if use_rewrite and kb_ids:
         try:
@@ -76,7 +76,7 @@ async def rag_query(
         except:
             pass
 
-    # Query 改写（直接检索策略下使用）
+    # Query 改写
     queries = [question]
     if use_rewrite and kb_ids and strategy == "direct":
         try:
@@ -84,7 +84,7 @@ async def rag_query(
         except:
             pass
 
-    # 执行检索策略
+    # 执行检索
     items = await execute_strategy(strategy, question, kb_ids, top_k=8)
     logger.debug("Retrieved %d items via strategy '%s'", len(items), strategy)
 
@@ -106,10 +106,8 @@ async def rag_query(
     sources = [{
         "text": it["text"][:150],
         "score": round(max(filter(None, [
-            it.get("final_score"),
-            it.get("dense_score"),
-            it.get("rerank_score"),
-            it.get("score"),
+            it.get("final_score"), it.get("dense_score"),
+            it.get("rerank_score"), it.get("score"),
         ])), 3) if any(it.get(k) for k in ["final_score","dense_score","rerank_score","score"]) else 0,
         "kb_id": it.get("kb_id") if it.get("kb_id") else (kb_ids[0] if kb_ids else 0),
         "doc_id": it.get("doc_id", 0),
@@ -134,11 +132,7 @@ async def rag_query(
                     seen.add(k2)
                     kb_name = kb_map.get(s["kb_id"], f"知识库{s['kb_id']}") if s.get("kb_id") else "未知知识库"
                     doc_name = doc_map.get(s.get("doc_id", 0), f"文档#{s.get('doc_id', 0)}")
-                    source_info.append({
-                        "kb_name": kb_name,
-                        "doc_name": doc_name,
-                        "score": s["score"],
-                    })
+                    source_info.append({"kb_name": kb_name, "doc_name": doc_name, "score": s["score"]})
         finally:
             if not db: _db.close()
 
@@ -149,38 +143,30 @@ async def rag_query(
     else:
         ctx = "\n\n---\n\n".join(all_contexts[:8]) if all_contexts else "暂无相关内容。"
 
-    # 消息
+    # 消息 + 流式生成
     msgs = (history_messages[-(history_rounds * 2):] if history_messages else []) + [{"role": "user", "content": build_rag_prompt(question, [ctx])}]
-
-    # 流式生成
     full = ""
     async for chunk in chat_stream(msgs, temperature=temperature, top_p=top_p, max_tokens=max_tokens):
         full += chunk; yield chunk
     logger.info("RAG answer generated: '%s' → %d chars", question[:60], len(full))
 
-    # 评估 + 来源
-    eval_result = None
-    try:
-        eval_result = run_evaluation(question, full, all_contexts, use_llm=False)
-        llm_scores = await _llm_evaluate(question, full, all_contexts)
-        if llm_scores:
-           eval_result = apply_llm_result(eval_result, llm_scores)
-    except:
-        pass
-
-    payload = {"sources": source_info, "evaluation": None}
-    if eval_result:
-        payload["evaluation"] = {
-            "context_relevance": eval_result["context_relevance"],
-            "faithfulness": eval_result["faithfulness"],
-            "answer_relevance": eval_result.get("answer_relevance", 0),
-            "avg": eval_result["avg_score"],
-            "method": eval_result.get("method", "keyword"),
-            "reason": eval_result.get("reason", ""),
-        }
+    # ---- 关键词快速评估（同步，即时展示） ----
+    keyword_eval = run_evaluation(question, full, all_contexts)
+    payload = {
+        "sources": source_info,
+        "evaluation": {
+            "context_relevance": keyword_eval["context_relevance"],
+            "context_recall": keyword_eval["context_recall"],
+            "context_precision": keyword_eval["context_precision"],
+            "faithfulness": keyword_eval["faithfulness"],
+            "answer_relevance": keyword_eval["answer_relevance"],
+            "avg": keyword_eval["avg_score"],
+            "method": "keyword",
+        },
+    }
     yield "\n\n---SOURCES---\n" + json.dumps(payload, ensure_ascii=False)
 
-    # 保存到 FAQ 并更新统计（带完整答案）
+    # 保存到 FAQ
     if db and full:
         try:
             from app.services.faq_stats_service import update_answer

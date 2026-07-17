@@ -24,8 +24,11 @@ const expanded = ref(false)
         <ThinkingDots v-if="msg.streaming && !msg.content" />
         <div v-else class="msg-text">{{ msg.content }}</div>
         <div v-if="msg._evaluation && !msg.streaming" class="eval-box">
-          <span class="eval-badge">上下文相关性 {{ (msg._evaluation.context_relevance * 100).toFixed(0) }}%</span>
-          <span class="eval-badge">答案忠实度 {{ (msg._evaluation.faithfulness * 100).toFixed(0) }}%</span>
+          <span class="eval-badge">检索精度 {{ ((msg._evaluation.context_relevance || msg._evaluation.context_precision || 0) * 100).toFixed(0) }}%</span>
+          <span class="eval-badge">检索召回 {{ ((msg._evaluation.context_recall || 0) * 100).toFixed(0) }}%</span>
+          <span class="eval-badge">忠实度 {{ ((msg._evaluation.faithfulness || 0) * 100).toFixed(0) }}%</span>
+          <span class="eval-badge">回答相关 {{ ((msg._evaluation.answer_relevance || 0) * 100).toFixed(0) }}%</span>
+          <span class="eval-method" v-if="msg._evaluation.method">{{ msg._evaluation.method === 'ragas' ? '🤖 Ragas' : '⚡ 快速' }}</span>
         </div>
         <div v-if="msg._sources && msg._sources.length && !msg.streaming">
           <div class="src-bar-badge" @click="expanded = !expanded">
@@ -63,8 +66,9 @@ const expanded = ref(false)
 .msg-bub.assistant { background: rgba(255,255,255,0.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 1px 4px rgba(0,0,0,0.04); border-bottom-left-radius: 4px }
 
 .msg-text { white-space: pre-wrap }
-.eval-box { display: flex; gap: 8px; margin-top: 6px }
-.eval-badge { padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 500; background: var(--accent-soft); color: var(--accent) }
+.eval-box { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; align-items: center }
+.eval-badge { padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: 500; background: var(--accent-soft); color: var(--accent); white-space: nowrap }
+.eval-method { font-size: 9px; padding: 2px 6px; border-radius: 8px; background: var(--bg-hover); color: var(--text-tertiary); margin-left: auto }
 .src-bar-badge { width: 218px; padding: 3px 10px; margin-top: 4px; border-radius: 12px; font-size: 10px; font-weight: 500; background: var(--accent-soft); color: var(--accent); cursor: pointer; user-select: none }
 .src-bar-label { font-weight: 500 }
 .src-bar-hint { font-size: 10px; color: var(--text-tertiary) }

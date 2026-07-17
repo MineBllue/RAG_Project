@@ -7,7 +7,11 @@ export interface Conversation {
 /** 评估结果 */
 export interface Evaluation {
   context_relevance: number
+  context_recall?: number
+  context_precision?: number
   faithfulness: number
+  answer_relevance?: number
+  method?: string
 }
 
 /** 引用来源 */

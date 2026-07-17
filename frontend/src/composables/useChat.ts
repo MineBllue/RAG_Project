@@ -99,8 +99,8 @@ export function useChat() {
               last.streaming = false
               if (d.sources) {
                 last._sources = Array.isArray(d.sources) ? d.sources : (d.sources.sources || d.sources)
-                last._evaluation = d.sources.evaluation || null
               }
+              last._evaluation = d.evaluation || d.sources?.evaluation || null
             }
             if (d.error) { last.content = '错误: ' + d.error; last.streaming = false }
           } catch {}
@@ -114,6 +114,7 @@ export function useChat() {
       sending.value = false
     }
   }
+
 
   return {
     conversations, activeConvId, messages, inputText, sending, chatArea,
