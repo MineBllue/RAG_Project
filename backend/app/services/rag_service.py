@@ -123,8 +123,16 @@ async def rag_query(
     # ---- 流式生成 ----
     msgs = (history_messages[-(history_rounds * 2):] if history_messages else []) + [{"role": "user", "content": build_rag_prompt(question, [ctx])}]
     full = ""
+    pending = ""
     async for chunk in chat_stream(msgs, temperature=temperature, top_p=top_p, max_tokens=max_tokens):
-        full += chunk; yield chunk
+        full += chunk
+        if pending:
+            yield pending
+        pending = chunk
+    # 最后一段可能含 [SUFFICIENT]/[INSUFFICIENT]，清理后再发送
+    pending = pending.replace("[SUFFICIENT]", "").replace("[INSUFFICIENT]", "").strip()
+    if pending:
+        yield pending
     logger.info("RAG answer generated: '%s' → %d chars", question[:60], len(full))
 
     # ---- Corrective RAG: LLM 自评 [INSUFFICIENT] 则重查一轮 ----
@@ -142,8 +150,13 @@ async def rag_query(
             all_contexts = new_contexts
             new_msgs = (history_messages[-(history_rounds * 2):] if history_messages else []) + [{"role": "user", "content": build_rag_prompt(question, [new_ctx])}]
             full = ""
+            pending = ""
             async for chunk in chat_stream(new_msgs, temperature=temperature, top_p=top_p, max_tokens=max_tokens):
-                full += chunk; yield chunk
+                full += chunk
+                if pending: yield pending
+                pending = chunk
+            pending = pending.replace("[SUFFICIENT]", "").replace("[INSUFFICIENT]", "").strip()
+            if pending: yield pending
             logger.info("Corrective RAG generated: %d chars", len(full))
     elif full_stripped.endswith("[SUFFICIENT]"):
         full = full_stripped.replace("[SUFFICIENT]", "").strip()
