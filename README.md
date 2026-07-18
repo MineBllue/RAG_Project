@@ -62,6 +62,8 @@
 - **答案忠实度** — 回答是否基于检索内容
 - **答案相关性** — 回答是否回应了问题
 - 基于 jieba 分词的关键词评估 + LLM 精评兜底
+- 在线即时：~0ms，对话中 4 指标即时展示（检索精度/召回/忠实度/回答相关性）
+- 离线精评：Ragas 批量评估 3 指标（检索精度/检索召回/忠实度）`scripts/eval_ragas.py`
 
 ### 用户系统
 
@@ -298,3 +300,17 @@ RAG-AICoding/
 5. **HTTPS**: 生产环境使用 Nginx 反向代理 + SSL
 6. **MinIO Policy**: 生产环境按需限制 Bucket 访问权限
 7. **Reranker**: 首次启动后台线程预热模型，不阻塞 API 响应
+### Ragas 离线评估
+
+```bash
+cd backend && conda activate RAG-Project
+DASHSCOPE_API_KEY=sk-xxx python scripts/eval_ragas.py
+```
+
+| 输出 | 路径 |
+|------|------|
+| 终端实时 | 逐条进度 + 评分 |
+| 文本日志 | `logs/eval_ragas.log` |
+| JSON 报告 | `logs/ragas_eval_report.json` |
+
+---
