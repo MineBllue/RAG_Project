@@ -58,12 +58,34 @@
 
 ### RAG 评估
 
-- **上下文相关性** — 检索结果与问题的语义匹配度
-- **答案忠实度** — 回答是否基于检索内容
-- **答案相关性** — 回答是否回应了问题
-- 基于 jieba 分词的关键词评估 + LLM 精评兜底
-- 在线即时：~0ms，对话中 4 指标即时展示（检索精度/召回/忠实度/回答相关性）
-- 离线精评：Ragas 批量评估 3 指标（检索精度/检索召回/忠实度）`scripts/eval_ragas.py`
+**实时评估（对话中即时展示，~0ms）**
+
+基于 jieba 分词的 token 重叠率粗略估算，**非精确评估，仅供参考**：
+
+| 指标 | 算法 | 局限性 |
+|------|------|--------|
+| 检索精度 | query 与上下文 token 重叠率 | 字符重叠≠语义相关 |
+| 检索召回 | 回答与上下文 token 重叠率 | 同义词、反义词无法区分 |
+| 忠实度 | 回答每句与上下文 token 重叠 >20% 即判忠实 | 完全相反的答案也可能判忠实 |
+| 回答相关性 | query 与回答 token 重叠率 | 仅词级匹配 |
+
+> ⚠️ 以上 4 项均为 token 级粗略估算，不代表真实 RAG 质量。
+
+**离线精评（Ragas 框架，LLM-as-judge）**
+
+使用 [Ragas](https://github.com/explodinggradients/ragas) 框架的 LLM-as-judge 做精确批量评估：
+
+| 指标 | 算法 |
+|------|------|
+| 检索精度 | LLM 逐条判断检索文档是否与问题相关 |
+| 检索召回 | LLM 判断检索是否覆盖回答所需的全部信息 |
+| 忠实度 | LLM 将回答拆为独立 claims，逐一验证是否被上下文支持 |
+
+```bash
+cd backend && conda activate RAG-Project
+DASHSCOPE_API_KEY=sk-xxx python scripts/eval_ragas.py
+# 输出: logs/eval_ragas.log（文本） + logs/ragas_eval_report.json（JSON）
+```
 
 ### 用户系统
 
@@ -300,17 +322,3 @@ RAG-AICoding/
 5. **HTTPS**: 生产环境使用 Nginx 反向代理 + SSL
 6. **MinIO Policy**: 生产环境按需限制 Bucket 访问权限
 7. **Reranker**: 首次启动后台线程预热模型，不阻塞 API 响应
-### Ragas 离线评估
-
-```bash
-cd backend && conda activate RAG-Project
-DASHSCOPE_API_KEY=sk-xxx python scripts/eval_ragas.py
-```
-
-| 输出 | 路径 |
-|------|------|
-| 终端实时 | 逐条进度 + 评分 |
-| 文本日志 | `logs/eval_ragas.log` |
-| JSON 报告 | `logs/ragas_eval_report.json` |
-
----
