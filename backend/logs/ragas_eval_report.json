@@ -2,307 +2,249 @@
   "summary": {
     "total": 30,
     "valid": 30,
-    "elapsed_seconds": 438.4,
-    "by_type": {
-      "fact": {
-        "count": 16,
-        "precision": NaN,
-        "recall": NaN,
-        "faithfulness": NaN,
-        "relevancy": NaN
-      },
-      "reasoning": {
-        "count": 8,
-        "precision": NaN,
-        "recall": NaN,
-        "faithfulness": NaN,
-        "relevancy": NaN
-      },
-      "multi_hop": {
-        "count": 6,
-        "precision": 0.8333,
-        "recall": NaN,
-        "faithfulness": NaN,
-        "relevancy": NaN
-      }
-    },
-    "avg": {
-      "context_precision": NaN,
-      "context_recall": NaN,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
-    }
+    "elapsed_seconds": 633.3,
+    "note": "回答相关性(AnswerRelevancy)在 DashScope 下不可用(Ragas 内部硬编码调用 OpenAI Embedding API)"
   },
   "results": [
     {
       "qid": "Q001",
       "type": "fact",
       "question": "电子券有哪三种形态?各适用什么场景?",
-      "context_precision": NaN,
-      "context_recall": NaN,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 0.0,
+      "检索召回": 0.0,
+      "忠实度": 0.0
     },
     {
       "qid": "Q002",
       "type": "fact",
       "question": "电子券的生命周期包含哪些状态?已激活状态是如何触发的?",
-      "context_precision": 0.0,
-      "context_recall": 0.0,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 0.0,
+      "检索召回": 1.0,
+      "忠实度": 0.0
     },
     {
       "qid": "Q003",
       "type": "fact",
       "question": "实物商品券的破损补发分几个等级?中度破损如何处理?",
-      "context_precision": 1.0,
-      "context_recall": NaN,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 1.0,
+      "检索召回": 0.0,
+      "忠实度": 1.0
     },
     {
       "qid": "Q004",
       "type": "reasoning",
       "question": "用户实付89元购买车厘子提货券,签收后坏果比例25%,应赔付多少?",
-      "context_precision": 1.0,
-      "context_recall": 0.0,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 1.0,
+      "检索召回": 0.0,
+      "忠实度": 0.3333
     },
     {
       "qid": "Q005",
       "type": "reasoning",
       "question": "套餐券的定价上限如何计算?以2张32元拿铁券加1张42元蛋糕券的套餐为例。",
-      "context_precision": NaN,
-      "context_recall": NaN,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 1.0,
+      "检索召回": 1.0,
+      "忠实度": 0.0
     },
     {
       "qid": "Q006",
       "type": "multi_hop",
       "question": "用户以98元购买星巴克双人下午茶3件套餐(2张32元拿铁券+1张42元蛋糕券),核销1张拿铁券后申请退掉剩余全",
-      "context_precision": 1.0,
-      "context_recall": NaN,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 1.0,
+      "检索召回": 0.0,
+      "忠实度": 0.0
     },
     {
       "qid": "Q007",
       "type": "fact",
       "question": "SKU编码 EC-CF-SB-001 各段分别代表什么含义?",
-      "context_precision": 0.0,
-      "context_recall": NaN,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 0.0,
+      "检索召回": 0.0,
+      "忠实度": 0.0
     },
     {
       "qid": "Q008",
       "type": "multi_hop",
       "question": "商品主图上出现'全网最低价'促销贴片且文字面积占比超过20%,审核会如何处理?依据是什么?",
-      "context_precision": 1.0,
-      "context_recall": NaN,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 1.0,
+      "检索召回": 0.0,
+      "忠实度": 0.0
     },
     {
       "qid": "Q009",
       "type": "fact",
       "question": "验证码核销时连续输错多少次会被锁定?锁定多久?如何提前解锁?",
-      "context_precision": 0.0,
-      "context_recall": 0.0,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 0.0,
+      "检索召回": 0.0,
+      "忠实度": 0.8
     },
     {
       "qid": "Q010",
       "type": "fact",
       "question": "不同支付渠道的退款到账时效分别是多久?",
-      "context_precision": 0.0,
-      "context_recall": 0.0,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 1.0,
+      "检索召回": 0.0,
+      "忠实度": 0.0
     },
     {
       "qid": "Q011",
       "type": "fact",
       "question": "P1 工单的响应时限和解决时限是多少?超时会怎样?",
-      "context_precision": 1.0,
-      "context_recall": NaN,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 0.0,
+      "检索召回": 0.0,
+      "忠实度": 0.0
     },
     {
       "qid": "Q012",
       "type": "multi_hop",
       "question": "用户购买的券因商品被紧急下架无法核销,应如何处理?",
-      "context_precision": 1.0,
-      "context_recall": NaN,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 1.0,
+      "检索召回": 0.0,
+      "忠实度": 0.375
     },
     {
       "qid": "Q013",
       "type": "reasoning",
       "question": "一笔 350 元的不可退商品因描述严重不符要走特殊退款,需要谁审批?多久发起退款?",
-      "context_precision": 1.0,
-      "context_recall": 0.0,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 1.0,
+      "检索召回": 0.0,
+      "忠实度": 1.0
     },
     {
       "qid": "Q014",
       "type": "fact",
       "question": "用户声称券没用过但系统显示已核销,客服应如何处理?调查时限多久?",
-      "context_precision": 1.0,
-      "context_recall": NaN,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 1.0,
+      "检索召回": 0.0,
+      "忠实度": 0.9091
     },
     {
       "qid": "Q015",
       "type": "fact",
       "question": "券管理系统中报错码 ERR-4001 代表什么?应如何处理?",
-      "context_precision": 0.0,
-      "context_recall": 0.0,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 0.0,
+      "检索召回": 0.0,
+      "忠实度": 0.0
     },
     {
       "qid": "Q016",
       "type": "fact",
       "question": "数据分析平台的核销率如何计算?请举一个数字示例。",
-      "context_precision": 0.0,
-      "context_recall": 0.0,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 0.0,
+      "检索召回": 1.0,
+      "忠实度": 0.0
     },
     {
       "qid": "Q017",
       "type": "fact",
       "question": "数据分析平台的数据什么时候更新?延迟超过多久需要按故障上报?",
-      "context_precision": 1.0,
-      "context_recall": 0.0,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 1.0,
+      "检索召回": 0.0,
+      "忠实度": 0.0
     },
     {
       "qid": "Q018",
       "type": "multi_hop",
       "question": "客服要在券管理系统里做手工核销,完整的前置流程是什么?",
-      "context_precision": 0.0,
-      "context_recall": 0.0,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 1.0,
+      "检索召回": 0.0,
+      "忠实度": 0.0
     },
     {
       "qid": "Q019",
       "type": "reasoning",
       "question": "L1 权限的员工可以执行紧急下架吗?如果不行应该怎么办?",
-      "context_precision": 0.0,
-      "context_recall": NaN,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 1.0,
+      "检索召回": 0.0,
+      "忠实度": 0.0
     },
     {
       "qid": "Q020",
       "type": "fact",
       "question": "员工离职后账号如何处理?",
-      "context_precision": 1.0,
-      "context_recall": NaN,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 0.0,
+      "检索召回": 0.0,
+      "忠实度": 0.0
     },
     {
       "qid": "Q021",
       "type": "fact",
       "question": "券管理系统整体打不开、所有用户核销失败,属于什么故障等级?应如何上报?",
-      "context_precision": 0.0,
-      "context_recall": NaN,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 1.0,
+      "检索召回": 0.0,
+      "忠实度": 0.0
     },
     {
       "qid": "Q022",
       "type": "reasoning",
       "question": "某电子券商品当日详情页 UV 为 2000、支付订单数 180,该商品转化率是否达标?为什么?",
-      "context_precision": 0.0,
-      "context_recall": NaN,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 0.0,
+      "检索召回": 0.0,
+      "忠实度": 0.0
     },
     {
       "qid": "Q023",
       "type": "reasoning",
       "question": "满100减25的满减活动需要谁审批?为什么?",
-      "context_precision": 1.0,
-      "context_recall": 0.0,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 1.0,
+      "检索召回": 0.0,
+      "忠实度": 0.1667
     },
     {
       "qid": "Q024",
       "type": "fact",
       "question": "库存对账的核心公式是什么?",
-      "context_precision": 1.0,
-      "context_recall": NaN,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 0.0,
+      "检索召回": 0.0,
+      "忠实度": 0.0
     },
     {
       "qid": "Q025",
       "type": "reasoning",
       "question": "某券期初库存1200张,本月入库3000张,已售3500张,已退100张,供应商接口回传实际余量570张,是否",
-      "context_precision": 1.0,
-      "context_recall": NaN,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 1.0,
+      "检索召回": 0.0,
+      "忠实度": 0.5
     },
     {
       "qid": "Q026",
       "type": "multi_hop",
       "question": "32元的星巴克拿铁大杯电子券被误配成3.2元且每分钟下单量超过100单,应定为什么级别?值班人员只有L1权限时",
-      "context_precision": 1.0,
-      "context_recall": NaN,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 1.0,
+      "检索召回": 1.0,
+      "忠实度": 0.0
     },
     {
       "qid": "Q027",
       "type": "fact",
       "question": "P1事件在什么情况下会自动升级为P0?",
-      "context_precision": 0.0,
-      "context_recall": 0.0,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 0.0,
+      "检索召回": 0.0,
+      "忠实度": 0.0
     },
     {
       "qid": "Q028",
       "type": "fact",
       "question": "运营新人申请L2权限需要满足哪些前置条件?",
-      "context_precision": 0.0,
-      "context_recall": 0.0,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 0.0,
+      "检索召回": 0.0,
+      "忠实度": 0.0
     },
     {
       "qid": "Q029",
       "type": "reasoning",
       "question": "供应商SUP-2025-018在2025年3月核销星巴克拿铁大杯电子券12000张(结算单价25.50元)、星",
-      "context_precision": 0.0,
-      "context_recall": 1.0,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 0.0,
+      "检索召回": 0.0,
+      "忠实度": 0.0
     },
     {
       "qid": "Q030",
       "type": "multi_hop",
       "question": "供应商发生违约后,会如何影响其年度复审和结算?",
-      "context_precision": 1.0,
-      "context_recall": 0.0,
-      "faithfulness": NaN,
-      "answer_relevancy": NaN
+      "检索精度": 0.0,
+      "检索召回": 0.0,
+      "忠实度": 0.0
     }
   ]
 }

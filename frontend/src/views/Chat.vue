@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, onMounted, nextTick} from 'vue'
+import {ref, onMounted, nextTick, watch} from 'vue'
 import {useRouter} from 'vue-router'
 import {useAuthStore} from '../stores/auth'
 import {useAvatar} from '../composables/useAvatar'
@@ -46,8 +46,11 @@ function handleSend() {
     maxTokens: maxTokens.value,
     historyRounds: historyRounds.value,
   })
-  nextTick(() => messageInputRef.value?.focus())
 }
+
+watch(sending, (val) => {
+  if (!val) nextTick(() => messageInputRef.value?.focus())
+})
 
 function selectAllKb() {
   selectedKbIds.value = kbList.value.map(k => k.id)
